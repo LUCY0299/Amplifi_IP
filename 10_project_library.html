@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 專案庫 | Project Library</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(37,99,235,.08)}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#FFFFFF}
+    .user-mini{display:flex;align-items:center;gap:10px}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;border-bottom:1px solid rgba(37,99,235,.08);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .topbar h1{font-size:1.2rem;font-weight:700;color:var(--text)}
+    .btn-new-project{display:flex;align-items:center;gap:8px;padding:10px 22px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:.88rem;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(37,99,235,.25)}
+    .btn-new-project:hover{opacity:.87}
+
+    .content{padding:28px 36px;flex:1}
+
+    /* SEARCH BAR */
+    .search-row{display:flex;gap:12px;margin-bottom:24px;align-items:center}
+    .search-wrap{flex:1;position:relative}
+    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+    .search-input{width:100%;padding:11px 14px 11px 38px;background:var(--surface);border:1px solid rgba(37,99,235,.15);border-radius:10px;color:var(--text);font-size:.87rem;outline:none;transition:border-color .2s;font-family:inherit}
+    .search-input:focus{border-color:rgba(37,99,235,.4)}
+    .search-input::placeholder{color:rgba(91,111,154,.5)}
+    .filter-select{padding:10px 14px;background:var(--surface);border:1px solid rgba(37,99,235,.15);border-radius:10px;color:var(--text);font-size:.85rem;outline:none;cursor:pointer;font-family:inherit}
+
+    /* STATS ROW */
+    .stats-row{display:flex;gap:16px;margin-bottom:24px}
+    .stat-chip{background:var(--surface);border:1px solid rgba(37,99,235,.1);border-radius:10px;padding:12px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(37,99,235,.05)}
+    .stat-num{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .stat-label{font-size:.75rem;color:var(--muted)}
+
+    /* PROJECT TABLE */
+    .proj-table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .proj-table thead th{text-align:left;padding:10px 16px;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .proj-row{background:var(--surface);transition:all .2s;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.04)}
+    .proj-row:hover{background:rgba(37,99,235,.03)}
+    .proj-row td{padding:16px;border-top:1px solid rgba(37,99,235,.07);border-bottom:1px solid rgba(37,99,235,.07)}
+    .proj-row td:first-child{border-left:1px solid rgba(37,99,235,.07);border-radius:10px 0 0 10px;padding-left:20px}
+    .proj-row td:last-child{border-right:1px solid rgba(37,99,235,.07);border-radius:0 10px 10px 0;padding-right:20px}
+    .proj-name-cell .name{font-weight:600;font-size:.9rem}
+    .proj-name-cell .id{font-size:.73rem;color:var(--muted);margin-top:2px}
+    .step-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(212,168,67,.08);border:1px solid rgba(212,168,67,.15);border-radius:99px;padding:3px 10px;font-size:.73rem;color:var(--gold)}
+    .step-badge.done{background:rgba(80,220,100,.08);border-color:rgba(80,220,100,.2);color:#6EE89A}
+    .step-badge.in-progress{background:rgba(91,109,248,.08);border-color:rgba(91,109,248,.2);color:#8FA8FF}
+    .date-cell{font-size:.82rem;color:var(--muted)}
+    .tokens-cell{font-size:.82rem;color:var(--muted)}
+    .action-cell{display:flex;gap:8px;align-items:center}
+    .btn-load{padding:7px 14px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#0A0D14;font-weight:700;font-size:.75rem;cursor:pointer;transition:opacity .2s}
+    .btn-load:hover{opacity:.85}
+    .btn-del{padding:7px 10px;border:1px solid rgba(255,80,80,.2);border-radius:6px;background:transparent;color:#FF6B6B;cursor:pointer;font-size:.75rem;transition:all .2s}
+    .btn-del:hover{background:rgba(255,80,80,.05)}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:80px 40px;color:var(--muted)}
+    .empty-state .icon{font-size:3rem;margin-bottom:16px;opacity:.5}
+    .empty-state p{font-size:.9rem;line-height:1.6}
+
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--gold);border-radius:50%}
+
+    /* USER DROPDOWN */
+    .user-dropdown{position:relative;cursor:pointer;padding-left:10px}
+    .avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border:2px solid #FFFFFF;box-shadow:0 2px 8px rgba(37,99,235,.1)}
+    .dropdown-menu{position:absolute;top:100%;right:0;margin-top:10px;background:#FFFFFF;border:1px solid rgba(37,99,235,.1);border-radius:10px;padding:8px 0;width:160px;box-shadow:0 4px 20px rgba(37,99,235,.12);display:none;z-index:100}
+    .dropdown-menu.show{display:block}
+    .dropdown-item{display:block;padding:10px 16px;font-size:.85rem;color:var(--text);text-decoration:none;transition:background .2s}
+    .dropdown-item:hover{background:rgba(37,99,235,.05);color:var(--gold)}
+    .dropdown-divider{height:1px;background:rgba(37,99,235,.06);margin:4px 0}
+
+    footer{padding:20px 36px;color:var(--muted);font-size:.75rem;border-top:1px solid rgba(255,255,255,.04)}
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(212,168,67,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item" href="10_project_library.html#"><span class="icon">➕</span>建立新專案</a>
+  <a class="nav-item active"><span class="icon">📁</span>專案庫</a>
+  <a class="nav-item" href="11_account_billing.html#plan"><span class="icon">📊</span>用量報告</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <a class="nav-item" href="11_account_billing.html" style="padding:0;margin-bottom:16px"><span class="icon">⚙</span>帳戶與帳務</a>
+    <p style="font-size:.7rem;color:var(--muted);padding-left:10px">登入為: 王小明</p>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <h1>📁 專案庫</h1>
+    <div class="topbar-actions" style="display:flex;align-items:center;gap:14px">
+      <button class="btn-new-project" onclick="location.href='05_patent_loading.html'">＋ 建立新專案</button>
+      <div class="user-dropdown">
+        <div class="avatar-sm">王</div>
+        <div class="dropdown-menu">
+          <a href="11_account_billing.html" class="dropdown-item">⚙ 帳戶中心</a>
+          <a href="11_account_billing.html#plan" class="dropdown-item">📊 用量報告</a>
+          <div class="dropdown-divider"></div>
+          <a href="01_landing_page.html" class="dropdown-item" style="color:#EF4444">🚪 登出</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- SEARCH + FILTER -->
+    <div class="search-row">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" placeholder="搜尋專案名稱、專利號..."/>
+      </div>
+      <select class="filter-select">
+        <option>全部狀態</option>
+        <option>進行中</option>
+        <option>已完成</option>
+        <option>草稿</option>
+      </select>
+      <select class="filter-select">
+        <option>最新優先</option>
+        <option>最舊優先</option>
+        <option>名稱排序</option>
+      </select>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-chip"><div class="stat-num">9</div><div class="stat-label">專案總數</div></div>
+      <div class="stat-chip"><div class="stat-num">7</div><div class="stat-label">已完成</div></div>
+      <div class="stat-chip"><div class="stat-num">2</div><div class="stat-label">進行中</div></div>
+      <div class="stat-chip"><div class="stat-num">18</div><div class="stat-label">剩餘篇數</div></div>
+    </div>
+
+    <!-- PROJECT TABLE -->
+    <table class="proj-table">
+      <thead>
+        <tr>
+          <th>專案名稱</th>
+          <th>狀態</th>
+          <th>最後修改</th>
+          <th>Token 消耗</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="proj-row">
+          <td class="proj-name-cell"><div class="name">新型專利 #003 — 無線充電裝置結構</div><div class="id">PRJ-2025-003</div></td>
+          <td><span class="step-badge in-progress">⚡ 步驟 3 進行中</span></td>
+          <td class="date-cell">2025/03/24 14:20</td>
+          <td class="tokens-cell">1,200萬</td>
+          <td class="action-cell"><button class="btn-load" onclick="location.href='07_embodiment_generator.html'">載入</button><button class="btn-del">删</button></td>
+        </tr>
+        <tr class="proj-row">
+          <td class="proj-name-cell"><div class="name">新型專利 #002 — 智慧感測器外殼</div><div class="id">PRJ-2025-002</div></td>
+          <td><span class="step-badge done">✓ 已完成導出</span></td>
+          <td class="date-cell">2025/03/23 09:45</td>
+          <td class="tokens-cell">2,480萬</td>
+          <td class="action-cell"><button class="btn-load" onclick="location.href='09_smart_output.html'">載入</button><button class="btn-del">删</button></td>
+        </tr>
+        <tr class="proj-row">
+          <td class="proj-name-cell"><div class="name">新型專利 #001 — 折疊式支架機構</div><div class="id">PRJ-2025-001</div></td>
+          <td><span class="step-badge done">✓ 已完成導出</span></td>
+          <td class="date-cell">2025/03/20 16:30</td>
+          <td class="tokens-cell">2,100萬</td>
+          <td class="action-cell"><button class="btn-load">載入</button><button class="btn-del">删</button></td>
+        </tr>
+        <tr class="proj-row">
+          <td class="proj-name-cell"><div class="name">新型專利 #007 — 防水接頭結構</div><div class="id">PRJ-2025-007</div></td>
+          <td><span class="step-badge done">✓ 已完成導出</span></td>
+          <td class="date-cell">2025/03/15 11:00</td>
+          <td class="tokens-cell">1,860萬</td>
+          <td class="action-cell"><button class="btn-load">載入</button><button class="btn-del">删</button></td>
+        </tr>
+        <tr class="proj-row">
+          <td class="proj-name-cell"><div class="name">新型專利 #006 — 快拆卡扣連接件</div><div class="id">PRJ-2025-006</div></td>
+          <td><span class="step-badge done">✓ 已完成導出</span></td>
+          <td class="date-cell">2025/03/10 14:55</td>
+          <td class="tokens-cell">2,230萬</td>
+          <td class="action-cell"><button class="btn-load">載入</button><button class="btn-del">删</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <footer>© 2025 智權新霸 Amplifi IP · 共 9 個專案</footer>
+</div>
+<div class="screen-label">UI Sketch · 4. Project Library</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const userDropdown = document.querySelector('.user-dropdown');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    userDropdown.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
+    document.addEventListener('click', () => { dropdownMenu.classList.remove('show'); });
+  });
+</script>
+</body>
+</html>

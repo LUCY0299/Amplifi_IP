@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — UI 草圖總覽 | Amplifi_IP_v1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px}
+
+    header{text-align:center;padding:60px 40px 40px;position:relative;overflow:hidden}
+    .header-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(37,99,235,.12) 0%,transparent 70%);pointer-events:none}
+    header h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:10px;position:relative}
+    .gold-text{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    header p{color:var(--muted);font-size:1rem;margin-bottom:8px;position:relative}
+    .version-badge{display:inline-block;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.2);border-radius:99px;padding:5px 16px;font-size:.78rem;color:var(--gold);font-weight:600;margin-top:8px}
+
+    /* LEGEND */
+    .legend{display:flex;gap:16px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
+    .legend-dot{width:10px;height:10px;border-radius:50%}
+
+    /* SECTIONS */
+    .section{max-width:1100px;margin:0 auto 48px;padding:0 30px}
+    .section-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid rgba(37,99,235,.1)}
+    .section-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:800;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(37,99,235,.3)}
+    .section-title{font-size:1.1rem;font-weight:700;color:var(--text)}
+    .section-desc{font-size:.82rem;color:var(--muted);margin-top:2px}
+
+    /* CARDS GRID */
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+    .screen-card{background:var(--surface);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius);overflow:hidden;text-decoration:none;color:var(--text);transition:all .25s;display:block;box-shadow:0 2px 10px rgba(37,99,235,.06)}
+    .screen-card:hover{border-color:rgba(37,99,235,.4);transform:translateY(-4px);box-shadow:0 16px 40px rgba(37,99,235,.15)}
+    .card-preview{height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;border-bottom:1px solid rgba(37,99,235,.08);position:relative;overflow:hidden}
+    .card-preview::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(37,99,235,.06),transparent)}
+    .card-body{padding:16px 18px}
+    .card-num{font-size:.7rem;font-weight:700;color:var(--gold);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+    .card-name{font-size:.95rem;font-weight:700;margin-bottom:5px;color:var(--text)}
+    .card-desc{font-size:.78rem;color:var(--muted);line-height:1.5}
+    .card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+    .card-tag{font-size:.66rem;padding:2px 8px;border-radius:99px;background:rgba(37,99,235,.08);color:var(--gold);border:1px solid rgba(37,99,235,.12)}
+
+    /* gradient bg colors for previews */
+    .bg-visitor{background:linear-gradient(135deg,#EEF4FF,#DBEAFE)}
+    .bg-dashboard{background:linear-gradient(135deg,#EFF6FF,#DBEAFE)}
+    .bg-workflow{background:linear-gradient(135deg,#EEF4FF,#E0EAFF)}
+    .bg-library{background:linear-gradient(135deg,#F0F9FF,#E0EEFF)}
+    .bg-billing{background:linear-gradient(135deg,#F0F7FF,#E3EEFF)}
+
+    footer{text-align:center;padding:30px;color:var(--muted);font-size:.78rem;border-top:1px solid rgba(37,99,235,.08);max-width:1100px;margin:0 auto}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-glow"></div>
+  <h1>⚖ 智權新霸 <span class="gold-text">UI 草圖總覽</span></h1>
+  <p>Amplifi_IP 前端使用者功能架構地圖 V1.1 · 所有頁面清單</p>
+  <span class="version-badge">Amplifi_IP_v1 · 共 11 個畫面</span>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(212,168,67,.6)"></div>訪客與註冊流程</div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(91,109,248,.6)"></div>使用者主控台</div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(160,120,48,.6)"></div>核心工作流程</div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(80,150,200,.6)"></div>專案庫</div>
+  <div class="legend-item"><div class="legend-dot" style="background:rgba(80,220,100,.5)"></div>帳戶與帳務中心</div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div><div class="section-title">訪客與註冊流程 (Visitor & Registration)</div><div class="section-desc">使用者與平台互動的第一個接觸點</div></div>
+  </div>
+  <div class="cards-grid">
+    <a class="screen-card" href="01_landing_page.html">
+      <div class="card-preview bg-visitor">🏠</div>
+      <div class="card-body">
+        <div class="card-num">1.1 Landing Page</div>
+        <div class="card-name">落地頁</div>
+        <div class="card-desc">展示核心價值、功能特色、安全聲明</div>
+        <div class="card-tags"><span class="card-tag">Hero Section</span><span class="card-tag">Features Grid</span><span class="card-tag">Workflow Steps</span></div>
+      </div>
+    </a>
+    <a class="screen-card" href="02_pricing_page.html">
+      <div class="card-preview bg-visitor">💰</div>
+      <div class="card-body">
+        <div class="card-num">1.2 Pricing Page</div>
+        <div class="card-name">方案與價格頁</div>
+        <div class="card-desc">三種計費方案、功能比較表、企業聯絡表單</div>
+        <div class="card-tags"><span class="card-tag">Plan Cards</span><span class="card-tag">Comparison Table</span><span class="card-tag">Contact Form</span></div>
+      </div>
+    </a>
+    <a class="screen-card" href="03_auth_flow.html">
+      <div class="card-preview bg-visitor">🔑</div>
+      <div class="card-body">
+        <div class="card-num">1.3 Auth Flow</div>
+        <div class="card-name">註冊 / 登入 / 忘記密碼</div>
+        <div class="card-desc">Tab 切換三種驗證模式，Google OAuth 支援</div>
+        <div class="card-tags"><span class="card-tag">Login</span><span class="card-tag">Register</span><span class="card-tag">Forgot Password</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div><div class="section-title">使用者主控台 (User Dashboard)</div><div class="section-desc">登入後的核心頁面，提供全局概覽與快速入口</div></div>
+  </div>
+  <div class="cards-grid">
+    <a class="screen-card" href="04_dashboard.html">
+      <div class="card-preview bg-dashboard">📊</div>
+      <div class="card-body">
+        <div class="card-num">2.0 Dashboard</div>
+        <div class="card-name">使用者主控台</div>
+        <div class="card-desc">快速統計、帳務概覽、Token 進度條、最近專案列表</div>
+        <div class="card-tags"><span class="card-tag">Quick Stats</span><span class="card-tag">Billing Overview</span><span class="card-tag">Recent Projects</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div><div class="section-title">核心工作流程 (Core Workflow)</div><div class="section-desc">六步驟 AI 驅動的專利說明書撰寫主工作區</div></div>
+  </div>
+  <div class="cards-grid">
+    <a class="screen-card" href="05_patent_loading.html">
+      <div class="card-preview bg-workflow">📝</div>
+      <div class="card-body">
+        <div class="card-num">3.1 Patent Loading View</div>
+        <div class="card-name">步驟1：資料導入</div>
+        <div class="card-desc">貼上或上傳專利文件，AI 自動解析填入基本資料</div>
+        <div class="card-tags"><span class="card-tag">File Upload</span><span class="card-tag">Text Input</span><span class="card-tag">PRO Template</span></div>
+      </div>
+    </a>
+    <a class="screen-card" href="06_claims_analysis.html">
+      <div class="card-preview bg-workflow">🌲</div>
+      <div class="card-body">
+        <div class="card-num">3.2 Claims Analysis View</div>
+        <div class="card-name">步驟2：權利要求解構</div>
+        <div class="card-desc">左右雙欄對比，視覺化階層樹展示原始與 AI 優化版本</div>
+        <div class="card-tags"><span class="card-tag">Dual Pane</span><span class="card-tag">Hierarchy Tree</span><span class="card-tag">Diff View</span></div>
+      </div>
+    </a>
+    <a class="screen-card" href="07_embodiment_generator.html">
+      <div class="card-preview bg-workflow">⚙</div>
+      <div class="card-body">
+        <div class="card-num">3.3 Embodiment Generator View</div>
+        <div class="card-name">步驟3：說明書核心生成</div>
+        <div class="card-desc">勾選權利要求、設定字數、依序生成各章節並審核品質</div>
+        <div class="card-tags"><span class="card-tag">Generation Controls</span><span class="card-tag">AI QA Report</span><span class="card-tag">PRO 一鍵生成</span></div>
+      </div>
+    </a>
+    <a class="screen-card" href="08_abstract_generator.html">
+      <div class="card-preview bg-workflow">🀤</div>
+      <div class="card-body">
+        <div class="card-num">3.4 Abstract Generator View</div>
+        <div class="card-name">步驟4：摘要生成</div>
+        <div class="card-desc">設定字數範圍，生成中英文摘要，可直接編輯修改</div>
+        <div class="card-tags"><span class="card-tag">Chinese Abstract</span><span class="card-tag">English Abstract</span><span class="card-tag">Editable Output</span></div>
+      </div>
+    </a>
+    <a class="screen-card" href="09_smart_output.html">
+      <div class="card-preview bg-workflow">🎯</div>
+      <div class="card-body">
+        <div class="card-num">3.5 Smart Output Platform</div>
+        <div class="card-name">步驟5：智慧產出與審核</div>
+        <div class="card-desc">完整說明書草稿預覽、AI 品質審核、代表圖選擇、一鍵導出</div>
+        <div class="card-tags"><span class="card-tag">Document Preview</span><span class="card-tag">QA Score</span><span class="card-tag">Export .doc/.txt</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div><div class="section-title">專案庫 (Project Library)</div><div class="section-desc">管理所有歷史專案的集中位置</div></div>
+  </div>
+  <div class="cards-grid">
+    <a class="screen-card" href="10_project_library.html">
+      <div class="card-preview bg-library">📁</div>
+      <div class="card-body">
+        <div class="card-num">4.0 Project Library</div>
+        <div class="card-name">專案庫</div>
+        <div class="card-desc">搜尋、篩選、載入或刪除歷史專案，統計快覽</div>
+        <div class="card-tags"><span class="card-tag">Search & Filter</span><span class="card-tag">Project Table</span><span class="card-tag">Status Badges</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div><div class="section-title">帳戶與帳務中心 (Account & Billing Center)</div><div class="section-desc">管理個人資訊、方案用量與購買紀錄</div></div>
+  </div>
+  <div class="cards-grid">
+    <a class="screen-card" href="11_account_billing.html">
+      <div class="card-preview bg-billing">⚙</div>
+      <div class="card-body">
+        <div class="card-num">5.0 Account & Billing</div>
+        <div class="card-name">帳戶與帳務中心</div>
+        <div class="card-desc">方案概覽、Token 消耗歷史、購買、帳單記錄、個人資料</div>
+        <div class="card-tags"><span class="card-tag">My Plan</span><span class="card-tag">Token History</span><span class="card-tag">Purchase</span><span class="card-tag">Profile</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  智權新霸 Amplifi_IP_v1 · UI 草圖套件 · 共 11 個畫面 · 依據「前端使用者功能架構地圖 V1.1」建立
+</footer>
+</body>
+</html>

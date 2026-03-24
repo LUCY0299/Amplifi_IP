@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 步驟4：摘要生成 | Abstract Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(37,99,235,.08)}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#FFFFFF}
+    .user-mini{display:flex;align-items:center;gap:10px}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;border-bottom:1px solid rgba(37,99,235,.08);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .topbar h1{font-size:1.1rem;font-weight:700}
+    .back-icon{cursor:pointer;color:var(--muted);margin-right:12px;transition:color .2s}
+    .back-icon:hover{color:var(--gold)}
+
+    .step-progress{display:flex;align-items:center;padding:14px 36px;background:var(--surface);border-bottom:1px solid rgba(212,168,67,.07);gap:4px;overflow-x:auto}
+    .step-pip{display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .pip-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+    .pip-num.done{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0A0D14}
+    .pip-num.active{background:var(--surface2);border:2px solid var(--gold);color:var(--gold)}
+    .pip-num.inactive{background:var(--surface2);border:2px solid rgba(255,255,255,.08);color:var(--muted)}
+    .pip-label{font-size:.75rem;font-weight:600;color:var(--muted)}
+    .pip-label.active-label{color:var(--gold)}
+    .pip-arrow{color:rgba(255,255,255,.1);font-size:.8rem;margin:0 4px}
+
+    .content{padding:28px 36px;flex:1;display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+
+    .panel{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);padding:24px}
+    .panel h3{font-size:.95rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+    /* SETTINGS */
+    .setting-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+    .setting-group label{font-size:.77rem;font-weight:600;color:var(--muted)}
+    .range-row{display:flex;align-items:center;gap:10px}
+    .range-row input{flex:1;padding:10px 12px;background:var(--surface2);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:var(--text);font-size:.87rem;outline:none;width:80px;transition:border-color .2s;font-family:inherit}
+    .range-row input:focus{border-color:rgba(212,168,67,.4)}
+    .range-sep{color:var(--muted);font-size:.8rem}
+
+    .btn-generate{width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#0A0D14;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
+    .btn-generate:hover{opacity:.87}
+    .btn-secondary{width:100%;padding:12px;border:1px solid rgba(212,168,67,.3);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-secondary:hover{background:rgba(212,168,67,.08)}
+
+    .hint-box{background:rgba(91,109,248,.05);border:1px solid rgba(91,109,248,.15);border-radius:9px;padding:14px;font-size:.78rem;color:#8FA8FF;line-height:1.6;margin-top:16px}
+
+    /* OUTPUT GRID */
+    .outputs{display:flex;flex-direction:column;gap:20px}
+    .output-panel{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);padding:24px}
+    .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .output-header h3{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:8px}
+    .output-header .word-count{font-size:.75rem;color:var(--muted);background:var(--surface2);padding:4px 10px;border-radius:6px}
+    .output-box{background:var(--surface2);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px;font-size:.85rem;line-height:1.95;color:var(--text);min-height:140px;position:relative}
+    .output-box:focus-within{border-color:rgba(212,168,67,.3)}
+
+    .char-count-bar{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:.73rem;color:var(--muted)}
+    .progress-thin{height:4px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;flex:1;margin:0 10px}
+    .progress-thin-fill{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));border-radius:99px;width:78%}
+
+    .action-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;background:var(--surface);border-top:1px solid rgba(212,168,67,.08)}
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--gold);border-radius:50%}
+
+    /* USER DROPDOWN */
+    .user-dropdown{position:relative;cursor:pointer;padding-left:10px}
+    .avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border:2px solid #FFFFFF;box-shadow:0 2px 8px rgba(37,99,235,.1)}
+    .dropdown-menu{position:absolute;top:100%;right:0;margin-top:10px;background:#FFFFFF;border:1px solid rgba(37,99,235,.1);border-radius:10px;padding:8px 0;width:160px;box-shadow:0 4px 20px rgba(37,99,235,.12);display:none;z-index:100}
+    .dropdown-menu.show{display:block}
+    .dropdown-item{display:block;padding:10px 16px;font-size:.85rem;color:var(--text);text-decoration:none;transition:background .2s}
+    .dropdown-item:hover{background:rgba(37,99,235,.05);color:var(--gold)}
+    .dropdown-divider{height:1px;background:rgba(37,99,235,.06);margin:4px 0}
+
+    .btn-next{padding:12px 32px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#0A0D14;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s}
+    .btn-next:hover{opacity:.87}
+    .btn-ghost{padding:11px 24px;border:1px solid rgba(212,168,67,.3);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.9rem;cursor:pointer}
+
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(212,168,67,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item active"><span class="icon">⚡</span>當前專案</a>
+  <a class="nav-item" href="10_project_library.html"><span class="icon">📁</span>專案庫</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <p style="font-size:.7rem;color:var(--muted);padding-left:10px">登入為: 王小明</p>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="back-icon" onclick="location.href='07_embodiment_generator.html'">←</span>
+      <h1>步驟 4：摘要生成</h1>
+    </div>
+    <div class="topbar-actions" style="display:flex;align-items:center;gap:16px">
+      <div style="font-size:.8rem;color:var(--muted)">Token: <strong style="color:var(--gold)">1,850萬 / 3,000萬</strong></div>
+      <div class="user-dropdown">
+        <div class="avatar-sm">王</div>
+        <div class="dropdown-menu">
+          <a href="11_account_billing.html" class="dropdown-item">⚙ 帳戶中心</a>
+          <a href="11_account_billing.html#plan" class="dropdown-item">📊 用量報告</a>
+          <div class="dropdown-divider"></div>
+          <a href="01_landing_page.html" class="dropdown-item" style="color:#EF4444">🚪 登出</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="step-progress">
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">資料導入</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">權利要求解構</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">說明書生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num active">4</div><div class="pip-label active-label">摘要生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">5</div><div class="pip-label">審核與輸出</div></div>
+  </div>
+
+  <div class="content">
+
+    <!-- LEFT: CONTROLS -->
+    <div>
+      <div class="panel">
+        <h3>⚙ 生成設定</h3>
+
+        <div class="setting-group">
+          <label>中文摘要字數範圍</label>
+          <div class="range-row">
+            <input type="number" value="150"/>
+            <span class="range-sep">至</span>
+            <input type="number" value="200"/>
+            <span class="range-sep" style="font-size:.75rem">字</span>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label>英文摘要字數範圍</label>
+          <div class="range-row">
+            <input type="number" value="100"/>
+            <span class="range-sep">至</span>
+            <input type="number" value="150"/>
+            <span class="range-sep" style="font-size:.75rem">words</span>
+          </div>
+        </div>
+
+        <button class="btn-generate">🀤 生成中文摘要</button>
+        <button class="btn-secondary">🌐 一鍵生成英文摘要</button>
+
+        <div class="hint-box">
+          💡 系統將根據步驟3的說明書內容，自動提煉技術要點並生成最精準的摘要。您可在輸出框直接修改。
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUTS -->
+    <div class="outputs">
+
+      <!-- Chinese Abstract -->
+      <div class="output-panel">
+        <div class="output-header">
+          <h3>🀤 中文摘要</h3>
+          <span class="word-count">168 字</span>
+        </div>
+        <div class="output-box" contenteditable="true">
+          本新型係關於一種無線充電裝置，主要包含一充電線圈模組及一控制模組。該充電線圈模組具有一初級線圈，用以與受電裝置之次級線圈進行電磁感應式無線電力傳輸。該控制模組電性連接至充電線圈模組，並包含一頻率調適電路及一過溫保護電路，前者依據負載狀態動態調整工作頻率，後者於溫度超過預定閾值時自動切斷電源，從而確保充電過程之安全性與效率。此外，本新型另設有一異物偵測模組，可即時偵測充電區域內之非受電物體，並立即停止充電操作，有效防止誤充造成之損害。本新型具有結構簡單、安全性高及充電效率佳等優點，適用於各種需要無線充電功能之電子裝置。
+        </div>
+        <div class="char-count-bar">
+          <span>150</span>
+          <div class="progress-thin"><div class="progress-thin-fill"></div></div>
+          <span>200</span>
+        </div>
+      </div>
+
+      <!-- English Abstract -->
+      <div class="output-panel">
+        <div class="output-header">
+          <h3>🌐 英文摘要</h3>
+          <span class="word-count">126 words</span>
+        </div>
+        <div class="output-box" contenteditable="true">
+          The present utility model relates to a wireless charging device comprising a charging coil module and a control module. The charging coil module includes a primary coil configured for electromagnetic inductive wireless power transmission to a secondary coil of a power-receiving device. The control module, electrically connected to the charging coil module, incorporates a frequency adaptation circuit and an over-temperature protection circuit. The former dynamically adjusts the operating frequency according to load conditions, and the latter automatically cuts off the power supply when the temperature exceeds a predetermined threshold, thereby ensuring charging safety and efficiency. Additionally, a foreign object detection module is provided to instantly detect non-receiving objects in the charging area and immediately terminate charging operations, preventing damage caused by accidental charging.
+        </div>
+        <div class="char-count-bar">
+          <span>100</span>
+          <div class="progress-thin"><div class="progress-thin-fill" style="width:84%"></div></div>
+          <span>150 words</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-ghost" onclick="location.href='07_embodiment_generator.html'">← 返回步驟 3</button>
+    <button class="btn-next" onclick="location.href='09_smart_output.html'">確認，進入步驟 5 →</button>
+  </div>
+</div>
+<div class="screen-label">UI Sketch · 3.4 Abstract Generator View</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const userDropdown = document.querySelector('.user-dropdown');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    if(userDropdown){
+      userDropdown.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
+      document.addEventListener('click', () => { dropdownMenu.classList.remove('show'); });
+    }
+  });
+</script>
+</body>
+</html>

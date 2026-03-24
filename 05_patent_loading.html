@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 步驟1：資料導入 | Patent Loading</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--accent:#2563EB;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+    /* Shared sidebar */
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(212,168,67,.1)}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#0A0D14;flex-shrink:0}
+    .user-mini{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;border-bottom:1px solid rgba(37,99,235,.08);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .topbar-left{display:flex;align-items:center;gap:12px}
+    .back-icon{cursor:pointer;color:var(--muted);font-size:1rem;transition:color .2s}
+    .back-icon:hover{color:var(--gold)}
+    .topbar h1{font-size:1.1rem;font-weight:700}
+
+    /* STEP PROGRESS */
+    .step-progress{display:flex;align-items:center;padding:16px 36px;background:var(--surface);border-bottom:1px solid rgba(212,168,67,.07);gap:4px;overflow-x:auto}
+    .step-pip{display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .pip-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+    .pip-num.done{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0A0D14}
+    .pip-num.active{background:var(--surface2);border:2px solid var(--gold);color:var(--gold)}
+    .pip-num.inactive{background:var(--surface2);border:2px solid rgba(255,255,255,.08);color:var(--muted)}
+    .pip-label{font-size:.75rem;font-weight:600;color:var(--muted)}
+    .pip-label.active-label{color:var(--gold)}
+    .pip-arrow{color:rgba(255,255,255,.1);font-size:.8rem;margin:0 4px}
+
+    /* CONTENT */
+    .content{padding:32px 36px;flex:1}
+    .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:1100px}
+
+    /* PANELS */
+    .panel{background:var(--surface);border:1px solid rgba(37,99,235,.1);border-radius:var(--radius);padding:28px;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .panel h3{font-size:.95rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;color:var(--text)}
+    .panel .sub{color:var(--muted);font-size:.8rem;margin-bottom:20px}
+    .panel-tag{font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:auto}
+    .tag-pro{background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);color:var(--gold)}
+
+    /* FORM ELEMENTS */
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:.77rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+    .form-group textarea{width:100%;padding:12px;background:var(--surface2);border:1px solid rgba(37,99,235,.1);border-radius:10px;color:var(--text);font-size:.85rem;resize:vertical;outline:none;transition:border-color .2s;font-family:inherit}
+    .form-group textarea:focus{border-color:rgba(37,99,235,.4)}
+
+    /* FILE DROP */
+    .file-drop{border:2px dashed rgba(37,99,235,.2);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(37,99,235,.02)}
+    .file-drop:hover{border-color:rgba(37,99,235,.45);background:rgba(37,99,235,.04)}
+    .file-drop-icon{font-size:2rem;margin-bottom:10px}
+    .file-drop p{color:var(--muted);font-size:.82rem;line-height:1.6}
+    .file-drop strong{color:var(--gold)}
+    .file-formats{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+    .fmt-tag{background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.12);border-radius:99px;padding:3px 10px;font-size:.7rem;color:var(--muted)}
+
+    /* BASIC INFO PREVIEW */
+    .info-tabs{display:flex;gap:0;background:var(--surface2);border-radius:8px;padding:3px;margin-bottom:18px}
+    .info-tab{flex:1;text-align:center;padding:8px;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--muted);transition:all .2s}
+    .info-tab.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(37,99,235,.08)}
+    .info-field{display:flex;flex-direction:column;gap:3px;margin-bottom:14px}
+    .info-field label{font-size:.72rem;color:var(--muted);font-weight:600}
+    .info-field .val{font-size:.85rem;color:var(--text);background:var(--surface2);border-radius:8px;padding:9px 12px;border:1px solid rgba(37,99,235,.08)}
+    .info-field .val.placeholder{color:rgba(91,111,154,.45);font-style:italic}
+
+    /* PRO TEMPLATE */
+    .pro-box{background:linear-gradient(135deg,rgba(37,99,235,.05),rgba(37,99,235,.02));border:1px solid rgba(37,99,235,.2);border-radius:12px;padding:20px}
+    .pro-box-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .pro-box-header span:first-child{font-size:1.1rem}
+    .pro-box-header h4{font-size:.88rem;font-weight:700;color:var(--text)}
+    .pro-box-header .pro-badge{margin-left:auto;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:99px}
+
+    /* ACTION BUTTON */
+    .btn-analyze{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 24px rgba(37,99,235,.3);margin-top:20px}
+    .btn-analyze:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(37,99,235,.4)}
+
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--gold);border-radius:50%}
+
+    /* USER DROPDOWN */
+    .user-dropdown{position:relative;cursor:pointer;padding-left:10px}
+    .avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border:2px solid #FFFFFF;box-shadow:0 2px 8px rgba(37,99,235,.1)}
+    .dropdown-menu{position:absolute;top:100%;right:0;margin-top:10px;background:#FFFFFF;border:1px solid rgba(37,99,235,.1);border-radius:10px;padding:8px 0;width:160px;box-shadow:0 4px 20px rgba(37,99,235,.12);display:none;z-index:100}
+    .dropdown-menu.show{display:block}
+    .dropdown-item{display:block;padding:10px 16px;font-size:.85rem;color:var(--text);text-decoration:none;transition:background .2s}
+    .dropdown-item:hover{background:rgba(37,99,235,.05);color:var(--gold)}
+    .dropdown-divider{height:1px;background:rgba(37,99,235,.06);margin:4px 0}
+
+    footer{padding:20px 36px;color:var(--muted);font-size:.75rem;border-top:1px solid rgba(37,99,235,.08);background:var(--surface)}
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(37,99,235,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item active"><span class="icon">➕</span>建立新專案</a>
+  <a class="nav-item" href="10_project_library.html"><span class="icon">📁</span>專案庫</a>
+  <a class="nav-item" href="11_account_billing.html#plan"><span class="icon">📊</span>用量報告</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <p style="font-size:.7rem;color:var(--muted);padding-left:10px">登入為: 王小明</p>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="back-icon" onclick="location.href='04_dashboard.html'">←</span>
+      <h1>步驟 1：專案啟動與資料導入</h1>
+    </div>
+    <div class="topbar-actions" style="display:flex;align-items:center;gap:16px">
+      <div style="font-size:.8rem;color:var(--muted)">剩餘篇數: <strong style="color:var(--gold)">18 篇</strong></div>
+      <div class="user-dropdown">
+        <div class="avatar-sm">王</div>
+        <div class="dropdown-menu">
+          <a href="11_account_billing.html" class="dropdown-item">⚙ 帳戶中心</a>
+          <a href="11_account_billing.html#plan" class="dropdown-item">📊 用量報告</a>
+          <div class="dropdown-divider"></div>
+          <a href="01_landing_page.html" class="dropdown-item" style="color:#EF4444">🚪 登出</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP PROGRESS -->
+  <div class="step-progress">
+    <div class="step-pip"><div class="pip-num active">1</div><div class="pip-label active-label">資料導入</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">2</div><div class="pip-label">權利要求解構</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">3</div><div class="pip-label">說明書生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">4</div><div class="pip-label">摘要生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">5</div><div class="pip-label">審核與輸出</div></div>
+  </div>
+
+  <div class="content">
+    <div class="content-grid">
+
+      <!-- LEFT: INPUT -->
+      <div>
+        <!-- TEXT INPUT -->
+        <div class="panel" style="margin-bottom:20px">
+          <h3>📝 貼上專利核心要件</h3>
+          <p class="sub">請貼入專利四大核心要件文字（名稱、摘要、說明、權利要求）</p>
+          <div class="form-group">
+            <label>專利名稱</label>
+            <textarea rows="1" placeholder="例：無線充電裝置之新型結構"></textarea>
+          </div>
+          <div class="form-group">
+            <label>摘要</label>
+            <textarea rows="3" placeholder="請貼入摘要文字..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>說明書内文</label>
+            <textarea rows="6" placeholder="請貼入說明書內文（技術領域、先前技術、發明內容...）"></textarea>
+          </div>
+          <div class="form-group">
+            <label>申請專利範圍 / 權利要求</label>
+            <textarea rows="5" placeholder="請貼入所有獨立項與附屬項..."></textarea>
+          </div>
+        </div>
+
+        <!-- FILE UPLOAD -->
+        <div class="panel" style="margin-bottom:20px">
+          <h3>📁 或上傳文件</h3>
+          <p class="sub">支援多種格式，系統自動解析後填入上方欄位</p>
+          <div class="file-drop">
+            <div class="file-drop-icon">⬆</div>
+            <p>拖放文件到此，或 <strong>點擊選擇文件</strong></p>
+            <div class="file-formats">
+              <span class="fmt-tag">.pdf</span>
+              <span class="fmt-tag">.txt</span>
+              <span class="fmt-tag">.doc</span>
+              <span class="fmt-tag">.docx</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMAGE UPLOAD -->
+        <div class="panel" style="margin-bottom:20px">
+          <h3>🖼 上傳專利圖式 <span style="color:var(--muted);font-size:.78rem;font-weight:400">(選填)</span></h3>
+          <p class="sub">上傳圖式後，系統將自動編號並產生圖式說明</p>
+          <div class="file-drop">
+            <div class="file-drop-icon">🖼</div>
+            <p>拖放圖式圖片，或 <strong>點擊選擇</strong></p>
+            <div class="file-formats">
+              <span class="fmt-tag">.png</span>
+              <span class="fmt-tag">.jpg</span>
+              <span class="fmt-tag">.svg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRO TEMPLATE -->
+        <div class="pro-box">
+          <div class="pro-box-header">
+            <span>✨</span>
+            <h4>黃金風格範本</h4>
+            <span class="pro-badge">PRO</span>
+          </div>
+          <p style="color:var(--muted);font-size:.8rem;line-height:1.6;margin-bottom:14px">貼上或上傳您認定的「高品質範本」，AI 將模仿其撰寫風格與語言習慣。</p>
+          <div class="file-drop" style="padding:16px">
+            <p style="font-size:.8rem">拖放範本文件或 <strong>點擊上傳</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW & INFO REVIEW -->
+      <div>
+        <div class="panel">
+          <h3>🔍 專利基本資料預覽</h3>
+          <p class="sub">AI 解析後，資料將自動填入以下欄位供您審核與修正</p>
+
+          <div class="info-tabs">
+            <div class="info-tab active">基本資訊</div>
+            <div class="info-tab">申請人資料</div>
+            <div class="info-tab">技術分類</div>
+          </div>
+
+          <div class="info-field"><label>專利名稱</label><div class="val placeholder">等待 AI 解析後自動填入...</div></div>
+          <div class="info-field"><label>技術領域</label><div class="val placeholder">例：電力電子、無線傳輸</div></div>
+          <div class="info-field"><label>申請人</label><div class="val placeholder">等待解析...</div></div>
+          <div class="info-field"><label>發明人</label><div class="val placeholder">等待解析...</div></div>
+          <div class="info-field"><label>獨立項數量</label><div class="val placeholder">— 項</div></div>
+          <div class="info-field"><label>附屬項數量</label><div class="val placeholder">— 項</div></div>
+          <div class="info-field"><label>圖式數量</label><div class="val placeholder">— 張</div></div>
+
+          <div style="margin-top:16px;padding:14px;background:rgba(91,109,248,.06);border:1px solid rgba(91,109,248,.15);border-radius:10px">
+            <p style="font-size:.78rem;color:#8FA8FF;line-height:1.6">💡 解析完成後，您可以直接在此頁面修正任何資料，確認無誤後再進入下一步驟。</p>
+          </div>
+
+          <button class="btn-analyze" onclick="location.href='06_claims_analysis.html'">
+            ⚡ 分析新型專利內文
+          </button>
+
+          <p style="text-align:center;font-size:.73rem;color:var(--muted);margin-top:10px">預計消耗約 500,000 Token · 剩餘 18 篇</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <footer>© 2025 智權新霸 Amplifi IP</footer>
+</div>
+<div class="screen-label">UI Sketch · 3.1 Patent Loading View</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const userDropdown = document.querySelector('.user-dropdown');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    userDropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('show');
+    });
+    document.addEventListener('click', () => {
+      dropdownMenu.classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>
