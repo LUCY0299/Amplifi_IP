@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 登入 / 註冊 | Auth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--accent:#2563EB;--radius:16px;--radius-sm:8px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:linear-gradient(160deg,#F0F6FF 0%,#E6EFFF 100%);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow-x:hidden}
+    .bg-glow{position:fixed;top:0;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.1) 0%,transparent 65%);pointer-events:none}
+
+    .auth-container{width:100%;max-width:440px;position:relative;z-index:1}
+
+    /* LOGO */
+    .auth-logo{text-align:center;margin-bottom:36px}
+    .auth-logo span{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .auth-logo p{color:var(--muted);font-size:.82rem;margin-top:4px}
+
+    /* TABS */
+    .auth-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:28px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:6px;cursor:pointer;font-size:.88rem;font-weight:600;color:var(--muted);transition:all .2s}
+    .tab.active{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF}
+
+    /* CARD */
+    .auth-card{background:var(--surface);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius);padding:36px;box-shadow:0 4px 24px rgba(37,99,235,.08)}
+    .auth-card h2{font-size:1.2rem;font-weight:700;margin-bottom:6px;color:var(--text)}
+    .auth-card .sub{color:var(--muted);font-size:.83rem;margin-bottom:28px}
+
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+    .form-group input{width:100%;padding:12px 14px;background:var(--surface2);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius-sm);color:var(--text);font-size:.9rem;outline:none;transition:border-color .2s;font-family:inherit}
+    .form-group input:focus{border-color:rgba(37,99,235,.5);background:#FFFFFF}
+    .form-group input::placeholder{color:rgba(91,111,154,.4)}
+
+    .forgot-link{display:block;text-align:right;font-size:.78rem;color:var(--gold);text-decoration:none;margin-top:-10px;margin-bottom:22px;cursor:pointer}
+    .forgot-link:hover{text-decoration:underline}
+
+    .btn-auth{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(37,99,235,.3);font-family:inherit}
+    .btn-auth:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(37,99,235,.4)}
+
+    .divider{display:flex;align-items:center;gap:14px;margin:22px 0;color:var(--muted);font-size:.78rem}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(37,99,235,.1)}
+
+    .oauth-btn{width:100%;padding:12px;border:1px solid rgba(37,99,235,.15);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:.88rem;font-weight:600;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;justify-content:center;gap:10px;font-family:inherit}
+    .oauth-btn:hover{border-color:rgba(37,99,235,.35)}
+
+    .terms{font-size:.74rem;color:var(--muted);text-align:center;margin-top:20px;line-height:1.6}
+    .terms a{color:var(--gold);text-decoration:none}
+
+    /* FORGOT PASSWORD PANEL */
+    .forgot-panel{display:none;background:var(--surface);border:1px solid rgba(37,99,235,.15);border-radius:var(--radius);padding:36px;box-shadow:0 4px 24px rgba(37,99,235,.08)}
+    .forgot-panel.show{display:block}
+    .forgot-panel h2{font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+    .forgot-panel p{color:var(--muted);font-size:.83rem;margin-bottom:24px}
+    .back-to-login{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);cursor:pointer;margin-top:16px}
+    .back-to-login:hover{color:var(--gold)}
+
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(37,99,235,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="auth-container">
+  <!-- LOGO -->
+  <div class="auth-logo">
+    <span>⚖ 智權新霸 Amplifi IP</span>
+    <p>台灣頂尖 AI 專利撰寫平台</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="auth-tabs">
+    <div class="tab active" id="tab-login" onclick="showLogin()">登入</div>
+    <div class="tab" id="tab-register" onclick="showRegister()">建立帳號</div>
+  </div>
+
+  <!-- LOGIN CARD -->
+  <div class="auth-card" id="login-card">
+    <h2>歡迎回來 👋</h2>
+    <p class="sub">登入您的帳號，繼續您的專利分析專案。</p>
+
+    <div class="form-group">
+      <label>電子郵件</label>
+      <input type="email" placeholder="your@email.com"/>
+    </div>
+    <div class="form-group">
+      <label>密碼</label>
+      <input type="password" placeholder="••••••••"/>
+    </div>
+    <a class="forgot-link" onclick="showForgot()">忘記密碼？</a>
+
+    <button class="btn-auth" onclick="location.href='04_dashboard.html'">登入</button>
+
+    <div class="divider">或</div>
+
+    <button class="oauth-btn">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#4285F4"/><text x="4" y="13" fill="white" font-size="9" font-weight="bold">G</text></svg>
+      使用 Google 帳號登入
+    </button>
+  </div>
+
+  <!-- REGISTER CARD -->
+  <div class="auth-card" id="register-card" style="display:none">
+    <h2>建立您的帳號</h2>
+    <p class="sub">開始一篇免費體驗，無需信用卡。</p>
+
+    <div class="form-group">
+      <label>姓名</label>
+      <input type="text" placeholder="您的姓名"/>
+    </div>
+    <div class="form-group">
+      <label>電子郵件</label>
+      <input type="email" placeholder="your@email.com"/>
+    </div>
+    <div class="form-group">
+      <label>密碼</label>
+      <input type="password" placeholder="至少 8 位，包含英文與數字"/>
+    </div>
+    <div class="form-group">
+      <label>確認密碼</label>
+      <input type="password" placeholder="再次輸入密碼"/>
+    </div>
+
+    <button class="btn-auth" onclick="location.href='04_dashboard.html'" style="margin-top:8px">建立帳號並開始試用</button>
+
+    <p class="terms">點擊即代表您同意我們的 <a href="#">服務條款</a> 與 <a href="#">隱私政策</a>。<br/>您的資料將依企業級標準加密保護。</p>
+  </div>
+
+  <!-- FORGOT PASSWORD -->
+  <div class="forgot-panel" id="forgot-card">
+    <h2>🔑 重設密碼</h2>
+    <p>請輸入您的帳號電子郵件，我們將發送重設連結給您。</p>
+    <div class="form-group">
+      <label>電子郵件</label>
+      <input type="email" placeholder="your@email.com"/>
+    </div>
+    <button class="btn-auth">發送重設連結</button>
+    <div class="back-to-login" onclick="showLogin()">← 返回登入</div>
+  </div>
+</div>
+
+<div class="screen-label">UI Sketch · 1.3 Auth Flow</div>
+
+<script>
+function showLogin(){
+  document.getElementById('login-card').style.display='block';
+  document.getElementById('register-card').style.display='none';
+  document.getElementById('forgot-card').classList.remove('show');
+  document.querySelector('.auth-tabs').style.display='flex';
+  document.getElementById('tab-login').classList.add('active');
+  document.getElementById('tab-register').classList.remove('active');
+}
+function showRegister(){
+  document.getElementById('login-card').style.display='none';
+  document.getElementById('register-card').style.display='block';
+  document.getElementById('forgot-card').classList.remove('show');
+  document.querySelector('.auth-tabs').style.display='flex';
+  document.getElementById('tab-login').classList.remove('active');
+  document.getElementById('tab-register').classList.add('active');
+}
+function showForgot(){
+  document.getElementById('login-card').style.display='none';
+  document.getElementById('register-card').style.display='none';
+  document.querySelector('.auth-tabs').style.display='none';
+  document.getElementById('forgot-card').classList.add('show');
+}
+</script>
+</body>
+</html>

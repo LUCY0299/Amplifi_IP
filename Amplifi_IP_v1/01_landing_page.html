@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 落地頁 | Landing Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;
+      --bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;
+      --text:#1A2540;--muted:#5B6F9A;--accent:#2563EB;
+      --radius:14px;--radius-sm:8px;
+    }
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+    /* NAV */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:20px 60px;position:fixed;top:0;width:100%;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(37,99,235,.12);box-shadow:0 2px 16px rgba(37,99,235,.06)}
+    .logo{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .nav-links{display:flex;gap:32px;list-style:none}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .2s}
+    .nav-links a:hover{color:var(--gold)}
+    .nav-cta{display:flex;gap:12px}
+    .btn-ghost{padding:9px 22px;border:1px solid rgba(37,99,235,.3);border-radius:var(--radius-sm);color:var(--gold);background:transparent;cursor:pointer;font-size:.85rem;transition:all .2s}
+    .btn-ghost:hover{border-color:var(--gold);background:rgba(37,99,235,.05)}
+    .btn-gold{padding:9px 22px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;cursor:pointer;font-size:.85rem;transition:opacity .2s}
+    .btn-gold:hover{opacity:.85}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 40px 60px;position:relative;overflow:hidden;background:linear-gradient(160deg,#F0F6FF 0%,#E8F0FF 40%,#EDF5FF 100%)}
+    .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(37,99,235,.12) 0%,transparent 70%);pointer-events:none}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.2);border-radius:99px;padding:6px 18px;font-size:.8rem;color:var(--gold);margin-bottom:28px}
+    .hero h1{font-size:clamp(2.4rem,5vw,4rem);font-weight:800;line-height:1.15;max-width:780px;margin-bottom:20px}
+    .gold-text{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-sub{color:var(--muted);font-size:1.1rem;max-width:560px;line-height:1.8;margin-bottom:44px}
+    .hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+    .btn-primary{padding:14px 36px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 30px rgba(37,99,235,.35)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(37,99,235,.45)}
+    .btn-outline{padding:14px 36px;border:1.5px solid rgba(37,99,235,.4);border-radius:var(--radius-sm);background:white;color:var(--gold);font-weight:600;font-size:1rem;cursor:pointer;transition:all .2s}
+    .btn-outline:hover{background:rgba(37,99,235,.06)}
+    .hero-note{margin-top:20px;font-size:.78rem;color:var(--muted)}
+
+    /* STATS BAND */
+    .stats-band{display:flex;justify-content:center;gap:60px;padding:28px 60px;background:var(--surface);border-top:1px solid rgba(37,99,235,.1);border-bottom:1px solid rgba(37,99,235,.1);flex-wrap:wrap;box-shadow:0 2px 16px rgba(37,99,235,.05)}
+    .stat{text-align:center}
+    .stat-val{font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .stat-label{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+    /* FEATURES */
+    section{padding:90px 60px}
+    .section-label{text-align:center;font-size:.8rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+    .section-title{text-align:center;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;margin-bottom:50px;color:var(--text)}
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto}
+    .feature-card{background:var(--surface);border:1px solid rgba(37,99,235,.1);border-radius:var(--radius);padding:30px;transition:border-color .3s,transform .3s,box-shadow .3s;box-shadow:0 2px 12px rgba(37,99,235,.06)}
+    .feature-card:hover{border-color:rgba(37,99,235,.3);transform:translateY(-4px);box-shadow:0 12px 32px rgba(37,99,235,.12)}
+    .feature-icon{width:48px;height:48px;background:linear-gradient(135deg,rgba(37,99,235,.15),rgba(37,99,235,.05));border:1px solid rgba(37,99,235,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px}
+    .feature-card h3{font-size:1.05rem;font-weight:700;margin-bottom:10px;color:var(--text)}
+    .feature-card p{color:var(--muted);font-size:.88rem;line-height:1.7}
+
+    /* WORKFLOW PREVIEW */
+    .workflow-steps{display:flex;align-items:flex-start;justify-content:center;gap:0;max-width:1000px;margin:0 auto;flex-wrap:wrap}
+    .step{display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;min-width:120px;padding:10px}
+    .step-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 4px 16px rgba(37,99,235,.3)}
+    .step-title{font-size:.82rem;font-weight:600;margin-bottom:4px;color:var(--text)}
+    .step-desc{font-size:.75rem;color:var(--muted);line-height:1.5}
+    .step-arrow{font-size:1.4rem;color:var(--gold);padding-top:12px;flex-shrink:0}
+
+    /* SECURITY */
+    .security-box{max-width:700px;margin:0 auto;background:var(--surface);border:1px solid rgba(37,99,235,.2);border-radius:var(--radius);padding:36px;text-align:center;box-shadow:0 4px 24px rgba(37,99,235,.08)}
+    .security-icon{font-size:2.5rem;margin-bottom:16px}
+    .security-box h3{font-size:1.2rem;font-weight:700;margin-bottom:12px;color:var(--text)}
+    .security-box p{color:var(--muted);font-size:.9rem;line-height:1.8}
+    .security-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+    .chip{background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.15);border-radius:99px;padding:5px 14px;font-size:.75rem;color:var(--gold)}
+
+    /* CTA BOTTOM */
+    .cta-section{text-align:center;padding:80px 40px;background:linear-gradient(180deg,var(--surface2) 0%,rgba(37,99,235,.04) 50%,var(--bg) 100%)}
+    .cta-section h2{font-size:2rem;font-weight:800;margin-bottom:16px;color:var(--text)}
+    .cta-section p{color:var(--muted);margin-bottom:36px;font-size:1rem}
+
+    /* FOOTER */
+    footer{text-align:center;padding:30px;color:var(--muted);font-size:.8rem;border-top:1px solid rgba(37,99,235,.08);background:var(--surface)}
+
+    /* screen-label watermark */
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(37,99,235,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">⚖ 智權新霸 Amplifi IP</div>
+  <ul class="nav-links">
+    <li><a href="#">功能特色</a></li>
+    <li><a href="#">工作流程</a></li>
+    <li><a href="02_pricing_page.html">方案價格</a></li>
+    <li><a href="#">安全聲明</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="btn-ghost" onclick="location.href='03_auth_flow.html'">登入</button>
+    <button class="btn-gold" onclick="location.href='03_auth_flow.html'">免費試用</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="badge">🏆 台灣頂尖 AI 智財撰寫平台</div>
+  <h1>讓 AI 為您打造<br/><span class="gold-text">黃金等級</span>的專利說明書</h1>
+  <p class="hero-sub">從資料導入到完稿輸出，六大步驟全自動。AI 解析、重構、生成，人機協作確保每份說明書精準合規。</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="location.href='03_auth_flow.html'">🚀 立即免費試用</button>
+    <button class="btn-outline" onclick="location.href='05_patent_loading.html'">觀看工作流程 →</button>
+  </div>
+  <p class="hero-note">無需信用卡 · 立即開始首篇分析</p>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stat"><div class="stat-val">6</div><div class="stat-label">核心自動化步驟</div></div>
+  <div class="stat"><div class="stat-val">30M</div><div class="stat-label">Token / 篇 處理量</div></div>
+  <div class="stat"><div class="stat-val">90%+</div><div class="stat-label">說明書初稿品質分</div></div>
+  <div class="stat"><div class="stat-val">AES-256</div><div class="stat-label">加密傳輸標準</div></div>
+</div>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-label">核心功能</div>
+  <h2 class="section-title">每一步，都有 AI 加持</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🌲</div>
+      <h3>視覺化權利要求階層樹</h3>
+      <p>自動將獨立項與附屬項構建為可互動的樹狀結構，清晰呈現專利保護範圍。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✨</div>
+      <h3>黃金風格模仿 (PRO)</h3>
+      <p>上傳優質範本，AI 學習其撰寫風格，讓新說明書與範本保持一致的高水平。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>AI 品質驗證報告</h3>
+      <p>每次生成後自動執行合規性審核，不通過可一鍵迭代自動修正。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👤</div>
+      <h3>人機協作審核</h3>
+      <p>每個 AI 步驟完成後，使用者保有最高修正權力，確保內容符合預期。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💰</div>
+      <h3>計費透明可視化</h3>
+      <p>即時顯示 Token 消耗與剩餘篇數，讓您對成本一目瞭然、心中有數。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>一鍵導出 .doc / .txt</h3>
+      <p>完整說明書草稿自動彙整，支援多種格式匯出，直接提交事務所。</p>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW STEPS -->
+<section style="background:var(--surface);border-top:1px solid rgba(212,168,67,.08);border-bottom:1px solid rgba(212,168,67,.08)">
+  <div class="section-label">六大核心步驟</div>
+  <h2 class="section-title">從原始文件到完整說明書</h2>
+  <div class="workflow-steps">
+    <div class="step"><div class="step-num">1</div><div class="step-title">資料導入</div><div class="step-desc">貼上或上傳<br/>專利文件</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">2</div><div class="step-title">權利要求解構</div><div class="step-desc">AI 建立<br/>階層樹</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">3</div><div class="step-title">說明書生成</div><div class="step-desc">生成實施例<br/>與新型內容</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">4</div><div class="step-title">摘要生成</div><div class="step-desc">中英文<br/>摘要</div></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">5</div><div class="step-title">審核與輸出</div><div class="step-desc">AI 品質審核<br/>一鍵導出</div></div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section>
+  <div class="section-label">資料安全</div>
+  <h2 class="section-title">您的智慧財產，我們嚴密守護</h2>
+  <div class="security-box">
+    <div class="security-icon">🔒</div>
+    <h3>企業級資料安全聲明</h3>
+    <p>您的專利內容是最高機密。我們採用端對端加密傳輸、零資料共享原則，並嚴格遵守資料主權規範。所有專案資料僅用於您的帳戶，絕不用於 AI 模型訓練。</p>
+    <div class="security-chips">
+      <span class="chip">AES-256 加密</span>
+      <span class="chip">零資料共享</span>
+      <span class="chip">GDPR 相容</span>
+      <span class="chip">隔離儲存架構</span>
+      <span class="chip">不用於 AI 訓練</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>準備好提升您的<span class="gold-text">專利撰寫效率</span>了嗎？</h2>
+  <p>立即免費試用，體驗 AI 驅動的專利說明書撰寫新時代。</p>
+  <button class="btn-primary" onclick="location.href='02_pricing_page.html'">查看方案價格 →</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  © 2025 智權新霸 Amplifi IP · 台灣 · 隱私政策 · 服務條款
+</footer>
+
+<div class="screen-label">UI Sketch · 1.1 Landing Page</div>
+</body>
+</html>

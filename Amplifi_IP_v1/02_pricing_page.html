@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 方案與價格 | Pricing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--accent:#2563EB;--radius:16px;--radius-sm:8px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:18px 60px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(37,99,235,.1);box-shadow:0 2px 16px rgba(37,99,235,.06)}
+    .logo{font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
+    .back-btn{padding:8px 18px;border:1px solid rgba(37,99,235,.25);border-radius:var(--radius-sm);background:transparent;color:var(--gold);cursor:pointer;font-size:.82rem;transition:all .2s}
+    .back-btn:hover{background:rgba(37,99,235,.06)}
+
+    .page-hero{text-align:center;padding:80px 40px 60px;background:linear-gradient(160deg,#F0F6FF 0%,#E8F0FF 100%)}
+    .page-hero h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:14px;color:var(--text)}
+    .gold-text{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .page-hero p{color:var(--muted);font-size:1rem;max-width:500px;margin:0 auto}
+
+    /* PLANS */
+    .plans-wrap{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:0 40px 80px;max-width:1100px;margin:0 auto}
+    .plan-card{background:var(--surface);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius);padding:36px 30px;flex:1;min-width:280px;max-width:340px;position:relative;transition:transform .3s,border-color .3s,box-shadow .3s;box-shadow:0 2px 16px rgba(37,99,235,.07)}
+    .plan-card:hover{transform:translateY(-4px);border-color:rgba(37,99,235,.3);box-shadow:0 12px 40px rgba(37,99,235,.12)}
+    .plan-card.featured{border-color:var(--gold);box-shadow:0 0 40px rgba(37,99,235,.15)}
+    .popular-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-size:.7rem;font-weight:800;padding:4px 16px;border-radius:99px;white-space:nowrap}
+    .plan-icon{font-size:2rem;margin-bottom:16px}
+    .plan-name{font-size:1.1rem;font-weight:700;margin-bottom:6px;color:var(--text)}
+    .plan-desc{color:var(--muted);font-size:.83rem;line-height:1.6;margin-bottom:24px}
+    .plan-price{margin-bottom:6px}
+    .price-val{font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .price-unit{font-size:.85rem;color:var(--muted);margin-left:4px}
+    .price-note{font-size:.78rem;color:var(--muted);margin-bottom:28px;min-height:18px}
+    .plan-divider{border:none;border-top:1px solid rgba(37,99,235,.1);margin-bottom:22px}
+    .plan-features{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:32px}
+    .plan-features li{display:flex;align-items:flex-start;gap:10px;font-size:.85rem;color:var(--muted)}
+    .plan-features li span:first-child{color:var(--gold);font-size:.9rem;margin-top:1px;flex-shrink:0}
+    .plan-features li.inactive span:first-child{color:var(--muted);opacity:.4}
+    .plan-features li.inactive{opacity:.5}
+    .btn-plan-primary{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+    .btn-plan-primary:hover{opacity:.87}
+    .btn-plan-ghost{width:100%;padding:13px;border:1.5px solid rgba(37,99,235,.3);border-radius:var(--radius-sm);background:transparent;color:var(--gold);font-weight:600;font-size:.95rem;cursor:pointer;transition:all .2s}
+    .btn-plan-ghost:hover{background:rgba(37,99,235,.06)}
+    .btn-plan-contact{width:100%;padding:13px;border:1.5px solid rgba(37,99,235,.25);border-radius:var(--radius-sm);background:rgba(37,99,235,.05);color:var(--gold);font-weight:600;font-size:.95rem;cursor:pointer;transition:all .2s}
+    .btn-plan-contact:hover{background:rgba(37,99,235,.09)}
+
+    /* FAQ / COMPARISON */
+    .comparison{max-width:860px;margin:0 auto;padding:0 40px 80px}
+    .comparison h2{text-align:center;font-size:1.5rem;font-weight:700;margin-bottom:32px;color:var(--text)}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    thead th{text-align:center;padding:14px 12px;color:var(--muted);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid rgba(37,99,235,.1)}
+    thead th:first-child{text-align:left}
+    tbody tr{border-bottom:1px solid rgba(37,99,235,.06)}
+    tbody tr:hover{background:rgba(37,99,235,.03)}
+    tbody td{padding:13px 12px;text-align:center;color:var(--muted)}
+    tbody td:first-child{text-align:left;color:var(--text);font-weight:500}
+    .check{color:var(--gold);font-size:1rem}
+    .cross{color:rgba(91,111,154,.25);font-size:1rem}
+
+    /* CONTACT FORM */
+    .contact-section{max-width:600px;margin:0 auto;padding:0 40px 100px}
+    .contact-box{background:var(--surface);border:1px solid rgba(37,99,235,.15);border-radius:var(--radius);padding:36px;box-shadow:0 4px 24px rgba(37,99,235,.07)}
+    .contact-box h2{font-size:1.3rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+    .contact-box p{color:var(--muted);font-size:.87rem;margin-bottom:28px}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+    .form-group input,.form-group textarea,.form-group select{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius-sm);color:var(--text);font-size:.87rem;outline:none;transition:border-color .2s;font-family:inherit}
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:rgba(37,99,235,.5)}
+    .form-group textarea{resize:vertical;min-height:90px}
+    .btn-contact-submit{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+    .btn-contact-submit:hover{opacity:.88}
+
+    footer{text-align:center;padding:28px;color:var(--muted);font-size:.78rem;border-top:1px solid rgba(37,99,235,.08);background:var(--surface)}
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(37,99,235,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="logo" onclick="location.href='01_landing_page.html'">⚖ 智權新霸 Amplifi IP</div>
+  <button class="back-btn" onclick="location.href='01_landing_page.html'">← 返回首頁</button>
+</nav>
+
+<div class="page-hero">
+  <h1>選擇最適合您的<span class="gold-text">方案</span></h1>
+  <p>彈性計費，精準對應每一位專利從業者的需求</p>
+</div>
+
+<!-- PLANS -->
+<div class="plans-wrap">
+
+  <!-- Single -->
+  <div class="plan-card">
+    <div class="plan-icon">📄</div>
+    <div class="plan-name">單篇方案</div>
+    <div class="plan-desc">彈性使用，按需購買，適合偶爾有說明書撰寫需求的使用者。</div>
+    <div class="plan-price"><span class="price-val">$5,000</span><span class="price-unit">元 / 篇</span></div>
+    <div class="price-note">依實際消耗計費</div>
+    <hr class="plan-divider"/>
+    <ul class="plan-features">
+      <li><span>✓</span><span>完整六步驟 AI 工作流程</span></li>
+      <li><span>✓</span><span>AI 品質驗證報告</span></li>
+      <li><span>✓</span><span>導出 .doc / .txt</span></li>
+      <li><span>✓</span><span>專案庫儲存</span></li>
+      <li class="inactive"><span>✗</span><span>黃金風格模仿 (PRO)</span></li>
+      <li class="inactive"><span>✗</span><span>一鍵全自動生成 (PRO)</span></li>
+    </ul>
+    <button class="btn-plan-ghost" onclick="location.href='03_auth_flow.html'">立即購買</button>
+  </div>
+
+  <!-- Bundle — FEATURED -->
+  <div class="plan-card featured">
+    <div class="popular-tag">🌟 最受歡迎</div>
+    <div class="plan-icon">📦</div>
+    <div class="plan-name">量販方案</div>
+    <div class="plan-desc">20 篇套裝，折扣最大，適合專利事務所或高頻使用者。</div>
+    <div class="plan-price"><span class="price-val">$60,000</span><span class="price-unit">元</span></div>
+    <div class="price-note" style="color:var(--gold)">含 20 篇 · 平均 $3,000/篇 · 省 40%</div>
+    <hr class="plan-divider"/>
+    <ul class="plan-features">
+      <li><span>✓</span><span>完整六步驟 AI 工作流程</span></li>
+      <li><span>✓</span><span>AI 品質驗證報告</span></li>
+      <li><span>✓</span><span>導出 .doc / .txt</span></li>
+      <li><span>✓</span><span>專案庫儲存</span></li>
+      <li><span>✓</span><span>黃金風格模仿 (PRO)</span></li>
+      <li><span>✓</span><span>一鍵全自動生成 (PRO)</span></li>
+    </ul>
+    <button class="btn-plan-primary" onclick="location.href='03_auth_flow.html'">立即購買</button>
+  </div>
+
+  <!-- Enterprise -->
+  <div class="plan-card">
+    <div class="plan-icon">🏢</div>
+    <div class="plan-name">企業方案</div>
+    <div class="plan-desc">大量需求或特殊整合需求，我們提供客製化報價與專屬業務對接。</div>
+    <div class="plan-price"><span class="price-val" style="font-size:1.8rem">洽談報價</span></div>
+    <div class="price-note">專屬業務人員對接</div>
+    <hr class="plan-divider"/>
+    <ul class="plan-features">
+      <li><span>✓</span><span>所有 PRO 功能</span></li>
+      <li><span>✓</span><span>客製化篇數方案</span></li>
+      <li><span>✓</span><span>專屬業務對接</span></li>
+      <li><span>✓</span><span>SLA 服務保障</span></li>
+      <li><span>✓</span><span>私有部署選項</span></li>
+      <li><span>✓</span><span>優先技術支援</span></li>
+    </ul>
+    <button class="btn-plan-contact">聯繫業務 →</button>
+  </div>
+</div>
+
+<!-- FEATURE COMPARISON TABLE -->
+<div class="comparison">
+  <h2>功能詳細比較</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>功能項目</th>
+        <th>單篇方案</th>
+        <th>量販方案</th>
+        <th>企業方案</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>六步驟 AI 工作流程</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>視覺化權利要求階層樹</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>AI 品質驗證報告</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>導出 .doc / .txt</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>黃金風格模仿 (PRO)</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>一鍵全自動生成 (PRO)</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>一鍵迭代自動修正 (PRO)</td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>客製化需求</td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+      <tr><td>專屬業務對接</td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ENTERPRISE CONTACT FORM -->
+<div class="contact-section">
+  <div class="contact-box">
+    <h2>✉ 聯繫業務</h2>
+    <p>告訴我們您的需求，我們的業務團隊將在 24 小時內與您聯繫。</p>
+    <div class="form-group">
+      <label>公司 / 事務所名稱</label>
+      <input type="text" placeholder="例：台灣智慧財產事務所"/>
+    </div>
+    <div class="form-group">
+      <label>聯絡人姓名</label>
+      <input type="text" placeholder="您的姓名"/>
+    </div>
+    <div class="form-group">
+      <label>電子郵件</label>
+      <input type="email" placeholder="your@email.com"/>
+    </div>
+    <div class="form-group">
+      <label>估計每月需求篇數</label>
+      <select>
+        <option>20 篇以下</option>
+        <option>20–50 篇</option>
+        <option>50–100 篇</option>
+        <option>100 篇以上</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>其他需求說明</label>
+      <textarea placeholder="請描述您的特殊需求或問題..."></textarea>
+    </div>
+    <button class="btn-contact-submit">送出詢問</button>
+  </div>
+</div>
+
+<footer>© 2025 智權新霸 Amplifi IP · 台灣 · 隱私政策 · 服務條款</footer>
+<div class="screen-label">UI Sketch · 1.2 Pricing Page</div>
+</body>
+</html>

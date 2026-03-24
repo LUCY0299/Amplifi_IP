@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 步驟3：說明書生成 | Embodiment Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(37,99,235,.08)}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#FFFFFF}
+    .user-mini{display:flex;align-items:center;gap:10px}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;border-bottom:1px solid rgba(37,99,235,.08);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .topbar h1{font-size:1.1rem;font-weight:700}
+    .back-icon{cursor:pointer;color:var(--muted);margin-right:12px;transition:color .2s}
+    .back-icon:hover{color:var(--gold)}
+
+    .step-progress{display:flex;align-items:center;padding:14px 36px;background:var(--surface);border-bottom:1px solid rgba(37,99,235,.07);gap:4px;overflow-x:auto}
+    .step-pip{display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .pip-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+    .pip-num.done{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF}
+    .pip-num.active{background:var(--surface2);border:2px solid var(--gold);color:var(--gold)}
+    .pip-num.inactive{background:var(--surface2);border:2px solid rgba(37,99,235,.1);color:var(--muted)}
+    .pip-label{font-size:.75rem;font-weight:600;color:var(--muted)}
+    .pip-label.active-label{color:var(--gold)}
+    .pip-arrow{color:rgba(255,255,255,.1);font-size:.8rem;margin:0 4px}
+
+    .content{padding:28px 36px;flex:1;display:flex;flex-direction:column;gap:24px}
+
+    .panel{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);padding:24px}
+    .panel h3{font-size:.95rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+    /* CLAIMS SELECTOR */
+    .claims-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+    .claim-check{display:flex;align-items:flex-start;gap:10px;background:var(--surface2);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s}
+    .claim-check:hover{border-color:rgba(212,168,67,.3)}
+    .claim-check.selected{border-color:rgba(212,168,67,.5);background:rgba(212,168,67,.05)}
+    .claim-check input{accent-color:var(--gold);width:15px;height:15px;margin-top:2px;flex-shrink:0}
+    .claim-check-label{font-size:.8rem;font-weight:600;color:var(--text)}
+    .claim-check-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+
+    /* SETTINGS ROW */
+    .settings-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:0}
+    .setting-group{display:flex;flex-direction:column;gap:6px}
+    .setting-group label{font-size:.77rem;font-weight:600;color:var(--muted)}
+    .setting-group input[type="number"],.setting-group select{padding:10px 12px;background:var(--surface2);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:var(--text);font-size:.87rem;outline:none;transition:border-color .2s;font-family:inherit}
+    .setting-group input[type="number"]:focus,.setting-group select:focus{border-color:rgba(212,168,67,.4)}
+
+    /* ACTIONS */
+    .action-buttons{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .btn-action{padding:10px 20px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px}
+    .btn-generate{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));border:none;color:#0A0D14}
+    .btn-generate:hover{opacity:.88}
+    .btn-secondary{background:transparent;border:1px solid rgba(212,168,67,.3);color:var(--gold)}
+    .btn-secondary:hover{background:rgba(212,168,67,.08)}
+    .btn-pro{background:rgba(212,168,67,.07);border:1px solid rgba(212,168,67,.25);color:var(--gold)}
+    .pro-badge-inline{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0A0D14;font-size:.6rem;font-weight:800;padding:2px 5px;border-radius:4px}
+
+    /* OUTPUT PANEL */
+    .output-tabs{display:flex;gap:0;background:var(--surface2);border-radius:8px;padding:3px;margin-bottom:18px;width:fit-content}
+    .output-tab{padding:8px 18px;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--muted);transition:all .2s;white-space:nowrap}
+    .output-tab.active{background:var(--surface);color:var(--text)}
+
+    .output-box{min-height:220px;background:var(--surface2);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px;font-size:.85rem;line-height:1.9;color:var(--muted);position:relative}
+    .output-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:180px;opacity:.5}
+    .output-placeholder .icon{font-size:2rem}
+    .output-placeholder p{font-size:.83rem;text-align:center}
+    .output-content{color:var(--text)}
+
+    /* QUALITY BADGE */
+    .quality-bar{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(80,220,100,.04);border:1px solid rgba(80,220,100,.15);border-radius:10px;margin-top:14px}
+    .quality-score{font-size:1.4rem;font-weight:800;color:#6EE89A}
+    .quality-label{font-size:.8rem;color:var(--muted)}
+    .quality-label strong{display:block;color:#6EE89A;font-size:.88rem}
+    .btn-iterate{padding:8px 16px;border:1px solid rgba(212,168,67,.3);border-radius:6px;background:transparent;color:var(--gold);font-size:.78rem;font-weight:600;cursor:pointer;margin-left:auto}
+    .pro-tag-small{font-size:.6rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0A0D14;padding:2px 5px;border-radius:3px;font-weight:800}
+
+    .action-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;background:var(--surface);border-top:1px solid rgba(212,168,67,.08)}
+    .btn-next{padding:12px 32px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#0A0D14;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s}
+    .btn-next:hover{opacity:.87}
+    .btn-ghost{padding:11px 24px;border:1px solid rgba(212,168,67,.3);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.9rem;cursor:pointer}
+
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(212,168,67,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item active"><span class="icon">⚡</span>當前專案</a>
+  <a class="nav-item" href="10_project_library.html"><span class="icon">📁</span>專案庫</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <div class="user-mini"><div class="avatar">王</div><div class="user-info"><div class="name">王小明</div><div class="email">wang@ipfirm.com</div></div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="back-icon" onclick="location.href='06_claims_analysis.html'">←</span>
+      <h1>步驟 3：說明書核心生成</h1>
+    </div>
+    <div style="font-size:.8rem;color:var(--muted)">Token: <strong style="color:var(--gold)">1,200萬 / 3,000萬</strong></div>
+  </div>
+  <div class="step-progress">
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">資料導入</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">權利要求解構</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num active">3</div><div class="pip-label active-label">說明書生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">4</div><div class="pip-label">摘要生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">5</div><div class="pip-label">審核與輸出</div></div>
+  </div>
+
+  <div class="content">
+
+    <!-- STEP A: SELECT -->
+    <div class="panel">
+      <h3>① 選擇生成範圍</h3>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:16px">勾選要生成實施例的權利要求項，並關聯對應圖式。</p>
+      <div class="claims-grid">
+        <div class="claim-check selected"><input type="checkbox" checked/><div><div class="claim-check-label">獨立項 1</div><div class="claim-check-sub">無線充電裝置基本結構</div></div></div>
+        <div class="claim-check selected"><input type="checkbox" checked/><div><div class="claim-check-label">附屬項 2</div><div class="claim-check-sub">頻率調適電路</div></div></div>
+        <div class="claim-check selected"><input type="checkbox" checked/><div><div class="claim-check-label">附屬項 3</div><div class="claim-check-sub">過溫保護電路</div></div></div>
+        <div class="claim-check"><input type="checkbox"/><div><div class="claim-check-label">獨立項 4</div><div class="claim-check-sub">無線充電系統</div></div></div>
+        <div class="claim-check"><input type="checkbox"/><div><div class="claim-check-label">附屬項 5</div><div class="claim-check-sub">整流模組</div></div></div>
+        <div class="claim-check"><input type="checkbox"/><div><div class="claim-check-label">附屬項 6 🆕</div><div class="claim-check-sub">異物偵測模組</div></div></div>
+      </div>
+    </div>
+
+    <!-- STEP B: SETTINGS -->
+    <div class="panel">
+      <h3>② 生成設定</h3>
+      <div class="settings-row">
+        <div class="setting-group"><label>「新型內容」期望字數</label><input type="number" value="1500" /></div>
+        <div class="setting-group"><label>「實施例」期望字數</label><input type="number" value="2500" /></div>
+        <div class="setting-group"><label>撰寫語言</label><select><option>繁體中文</option><option>簡體中文</option></select></div>
+        <div class="setting-group"><label>✨ 使用指定風格 <span class="pro-badge-inline">PRO</span></label><select><option>使用黃金範本風格</option><option>標準風格</option></select></div>
+      </div>
+    </div>
+
+    <!-- STEP C: GENERATE BUTTONS -->
+    <div class="panel">
+      <h3>③ 依序生成內容</h3>
+      <div style="margin-bottom:16px;padding:12px 16px;background:rgba(91,109,248,.05);border:1px solid rgba(91,109,248,.15);border-radius:9px;font-size:.8rem;color:#8FA8FF">
+        💡 請依序點擊以下按鈕，每步驟完成後請審核確認再繼續。
+      </div>
+      <div class="action-buttons">
+        <button class="btn-action btn-generate">🖼 生成圖式與符號說明</button>
+        <button class="btn-action btn-secondary">✅ 確認圖式，啟用內文生成</button>
+        <button class="btn-action btn-secondary">📝 生成實施例</button>
+        <button class="btn-action btn-secondary">📖 生成新型內容</button>
+        <button class="btn-action btn-secondary">🕰 生成先前技術</button>
+        <button class="btn-action btn-pro">⚡ 一鍵全自動生成 <span class="pro-badge-inline">PRO</span></button>
+      </div>
+    </div>
+
+    <!-- OUTPUT PREVIEW -->
+    <div class="panel">
+      <h3>④ 生成結果預覽</h3>
+      <div class="output-tabs">
+        <div class="output-tab active">圖式說明</div>
+        <div class="output-tab">實施例</div>
+        <div class="output-tab">新型內容</div>
+        <div class="output-tab">先前技術</div>
+      </div>
+
+      <div class="output-box">
+        <div class="output-content">
+          <p style="margin-bottom:12px"><strong>【圖式簡單說明】</strong></p>
+          <p>圖1係本新型一較佳實施例之無線充電裝置的立體示意圖。</p>
+          <p style="margin-top:6px">圖2係本新型一較佳實施例之充電線圈模組的分解示意圖。</p>
+          <p style="margin-top:6px">圖3係本新型一較佳實施例之控制模組的電路方塊圖。</p>
+          <p style="margin-top:18px"><strong>【主要元件符號說明】</strong></p>
+          <p style="margin-top:6px">100 … 無線充電裝置<br/>110 … 充電線圈模組<br/>111 … 初級線圈<br/>120 … 控制模組<br/>121 … 頻率調適電路<br/>122 … 過溫保護電路</p>
+        </div>
+      </div>
+
+      <!-- QUALITY REPORT -->
+      <div class="quality-bar">
+        <div class="quality-score">92</div>
+        <div class="quality-label"><strong>AI 品質驗證通過</strong>符合台灣專利法規範與格式要求</div>
+        <button class="btn-iterate">🔄 一鍵迭代 <span class="pro-tag-small">PRO</span></button>
+      </div>
+    </div>
+
+  </div>
+  <div class="action-bar">
+    <button class="btn-ghost" onclick="location.href='06_claims_analysis.html'">← 返回步驟 2</button>
+    <button class="btn-next" onclick="location.href='08_abstract_generator.html'">確認，進入步驟 4 →</button>
+  </div>
+</div>
+<div class="screen-label">UI Sketch · 3.3 Embodiment Generator View</div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 步驟2：權利要求解構 | Claims Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(37,99,235,.08)}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#FFFFFF}
+    .user-mini{display:flex;align-items:center;gap:10px}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;border-bottom:1px solid rgba(37,99,235,.08);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .topbar h1{font-size:1.1rem;font-weight:700}
+    .back-icon{cursor:pointer;color:var(--muted);margin-right:12px;transition:color .2s}
+    .back-icon:hover{color:var(--gold)}
+
+    .step-progress{display:flex;align-items:center;padding:14px 36px;background:var(--surface);border-bottom:1px solid rgba(37,99,235,.07);gap:4px;overflow-x:auto}
+    .step-pip{display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .pip-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+    .pip-num.done{background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF}
+    .pip-num.active{background:var(--surface2);border:2px solid var(--gold);color:var(--gold)}
+    .pip-num.inactive{background:var(--surface2);border:2px solid rgba(37,99,235,.1);color:var(--muted)}
+    .pip-label{font-size:.75rem;font-weight:600;color:var(--muted)}
+    .pip-label.active-label{color:var(--gold)}
+    .pip-arrow{color:rgba(255,255,255,.1);font-size:.8rem;margin:0 4px}
+
+    .content{padding:24px 36px;flex:1;display:flex;flex-direction:column}
+    .columns{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+
+    /* PANEL */
+    .panel{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden}
+    .panel-header{padding:18px 22px;border-bottom:1px solid rgba(212,168,67,.08);display:flex;align-items:center;justify-content:space-between}
+    .panel-header h3{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:8px}
+    .panel-tag{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:99px}
+    .tag-original{background:rgba(122,130,168,.15);border:1px solid rgba(122,130,168,.2);color:var(--muted)}
+    .tag-optimized{background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);color:var(--gold)}
+    .panel-body{padding:18px 22px;flex:1;overflow-y:auto;max-height:calc(100vh - 340px)}
+
+    /* TREE VIEW */
+    .tree{display:flex;flex-direction:column;gap:8px}
+    .tree-item{background:var(--surface2);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.05)}
+    .tree-item.independent-item{border-color:rgba(212,168,67,.2)}
+    .tree-item-header{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;cursor:pointer;transition:background .2s}
+    .tree-item-header:hover{background:rgba(255,255,255,.02)}
+    .item-num{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px}
+    .indep .item-num{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0A0D14}
+    .dep .item-num{background:rgba(122,130,168,.15);color:var(--muted)}
+    .item-text{font-size:.83rem;line-height:1.6;color:var(--text)}
+    .item-badge{font-size:.66rem;padding:2px 7px;border-radius:99px;flex-shrink:0;margin-top:3px}
+    .badge-indep{background:rgba(212,168,67,.12);color:var(--gold);border:1px solid rgba(212,168,67,.2)}
+    .badge-dep{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.06)}
+    .sub-items{padding:0 14px 10px 50px;display:flex;flex-direction:column;gap:6px}
+    .sub-item{background:rgba(255,255,255,.03);border-radius:8px;padding:10px 12px;border-left:2px solid rgba(212,168,67,.2);display:flex;gap:8px;align-items:flex-start}
+    .sub-item .snum{font-size:.7rem;color:var(--gold);font-weight:700;flex-shrink:0;margin-top:1px}
+    .sub-item p{font-size:.8rem;color:var(--muted);line-height:1.5}
+
+    /* OPTIMIZED PANEL — color highlights */
+    .highlight-added{background:rgba(80,220,100,.06);border-left:2px solid rgba(80,220,100,.3)}
+    .highlight-modified{background:rgba(212,168,67,.06);border-left:2px solid rgba(212,168,67,.3)}
+
+    /* CHANGE BADGE */
+    .change-tag{font-size:.63rem;padding:2px 6px;border-radius:99px;margin-top:2px;flex-shrink:0}
+    .change-added{background:rgba(80,220,100,.12);color:#6EE89A;border:1px solid rgba(80,220,100,.2)}
+    .change-modified{background:rgba(212,168,67,.12);color:var(--gold);border:1px solid rgba(212,168,67,.2)}
+    .change-same{background:rgba(255,255,255,.04);color:var(--muted)}
+
+    /* FOOTER ACTIONS */
+    .action-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;background:var(--surface);border-top:1px solid rgba(212,168,67,.08)}
+    .btn-next{padding:12px 32px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#0A0D14;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .2s}
+    .btn-next:hover{opacity:.87}
+    .btn-ghost{padding:11px 24px;border:1px solid rgba(212,168,67,.3);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.9rem;cursor:pointer}
+
+    footer{padding:20px 36px;color:var(--muted);font-size:.75rem;border-top:1px solid rgba(255,255,255,.04)}
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(212,168,67,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item active"><span class="icon">⚡</span>當前專案</a>
+  <a class="nav-item" href="10_project_library.html"><span class="icon">📁</span>專案庫</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <div class="user-mini"><div class="avatar">王</div><div class="user-info"><div class="name">王小明</div><div class="email">wang@ipfirm.com</div></div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="back-icon" onclick="location.href='05_patent_loading.html'">←</span>
+      <h1>步驟 2：權利要求書解構與優化</h1>
+    </div>
+    <div style="font-size:.8rem;color:var(--muted)">Token 消耗: <strong style="color:var(--gold)">850萬 / 3000萬</strong></div>
+  </div>
+
+  <div class="step-progress">
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">資料導入</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num active">2</div><div class="pip-label active-label">權利要求解構</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">3</div><div class="pip-label">說明書生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">4</div><div class="pip-label">摘要生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num inactive">5</div><div class="pip-label">審核與輸出</div></div>
+  </div>
+
+  <div class="content">
+    <div class="columns">
+
+      <!-- LEFT: ORIGINAL -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>📄 原始版本</h3>
+          <span class="panel-tag tag-original">原始輸入</span>
+        </div>
+        <div class="panel-body">
+          <div class="tree">
+
+            <!-- Independent Claim 1 -->
+            <div class="tree-item independent-item">
+              <div class="tree-item-header indep">
+                <div class="item-num indep">1</div>
+                <div class="item-text">一種無線充電裝置，其特徵在於，包含一充電線圈，用以與一受電裝置進行無線電力傳輸；以及一控制模組，電性連接至該充電線圈。</div>
+                <span class="item-badge badge-indep">獨立項</span>
+              </div>
+              <div class="sub-items">
+                <div class="sub-item"><span class="snum">2</span><p>如申請專利範圍第1項所述之無線充電裝置，其中該控制模組包含一頻率調適電路。</p></div>
+                <div class="sub-item"><span class="snum">3</span><p>如申請專利範圍第1項所述之無線充電裝置，其中該控制模組包含一過溫保護電路，當溫度超過預定閾值時自動切斷電源。</p></div>
+              </div>
+            </div>
+
+            <!-- Independent Claim 4 -->
+            <div class="tree-item independent-item">
+              <div class="tree-item-header indep">
+                <div class="item-num indep">4</div>
+                <div class="item-text">一種無線充電系統，包含如申請專利範圍第1至3項任一所述之無線充電裝置，以及一受電裝置。</div>
+                <span class="item-badge badge-indep">獨立項</span>
+              </div>
+              <div class="sub-items">
+                <div class="sub-item"><span class="snum">5</span><p>如申請專利範圍第4項所述之無線充電系統，其中該受電裝置包含一整流模組。</p></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: OPTIMIZED -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>✨ AI 優化版本</h3>
+          <span class="panel-tag tag-optimized">AI 重構</span>
+        </div>
+        <div class="panel-body">
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <span style="font-size:.73rem;color:var(--muted)">變更說明：</span>
+            <span style="font-size:.72px;background:rgba(80,220,100,.1);color:#6EE89A;padding:2px 8px;border-radius:99px;border:1px solid rgba(80,220,100,.2);font-size:.72rem">新增</span>
+            <span style="font-size:.72rem;background:rgba(212,168,67,.1);color:var(--gold);padding:2px 8px;border-radius:99px;border:1px solid rgba(212,168,67,.2)">強化</span>
+            <span style="font-size:.72rem;background:rgba(255,255,255,.04);color:var(--muted);padding:2px 8px;border-radius:99px;border:1px solid rgba(255,255,255,.06)">未變更</span>
+          </div>
+
+          <div class="tree">
+            <!-- Claim 1 MODIFIED -->
+            <div class="tree-item independent-item highlight-modified">
+              <div class="tree-item-header indep">
+                <div class="item-num indep">1</div>
+                <div class="item-text">一種無線充電裝置，其特徵在於，包含：一充電線圈模組，具有一初級線圈，用以與一受電裝置之次級線圈進行電磁感應式無線電力傳輸；以及一控制模組，電性連接至該充電線圈模組，用以動態調整充電頻率及輸出功率。</div>
+                <span class="change-tag change-modified">強化</span>
+              </div>
+              <div class="sub-items">
+                <div class="sub-item highlight-modified"><span class="snum">2</span><p>如申請專利範圍第1項所述之無線充電裝置，其中該控制模組包含一頻率調適電路，用以根據負載狀態自動調整工作頻率。</p></div>
+                <div class="sub-item"><span class="snum">3</span><p>如申請專利範圍第1項所述之無線充電裝置，其中該控制模組包含一過溫保護電路，當溫度超過預定閾值時自動切斷電源。</p></div>
+                <div class="sub-item highlight-modified" style="border-color:rgba(80,220,100,.3)"><span class="snum" style="color:#6EE89A">6</span><p>如申請專利範圍第1項所述之無線充電裝置，其中另包含一異物偵測模組，用以偵測充電區域內之非受電物體並停止充電操作。</p></div>
+              </div>
+            </div>
+
+            <!-- Claim 4 -->
+            <div class="tree-item independent-item">
+              <div class="tree-item-header indep">
+                <div class="item-num indep">4</div>
+                <div class="item-text">一種無線充電系統，包含如申請專利範圍第1至3及6項任一所述之無線充電裝置，以及一受電裝置。</div>
+                <span class="change-tag change-modified">強化</span>
+              </div>
+              <div class="sub-items">
+                <div class="sub-item"><span class="snum">5</span><p>如申請專利範圍第4項所述之無線充電系統，其中該受電裝置包含一整流模組。</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI REPORT -->
+          <div style="margin-top:16px;padding:14px;background:rgba(80,220,100,.04);border:1px solid rgba(80,220,100,.15);border-radius:10px">
+            <p style="font-size:.78rem;font-weight:700;color:#6EE89A;margin-bottom:6px">🤖 AI 優化說明</p>
+            <ul style="font-size:.77rem;color:var(--muted);line-height:1.7;padding-left:16px">
+              <li>獨立項1：補充技術機制說明，強化保護範圍</li>
+              <li>附屬項2：增加頻率調整機制之功能說明</li>
+              <li>新增附屬項6：異物偵測（提升安全性描述）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-ghost" onclick="location.href='05_patent_loading.html'">← 返回步驟 1</button>
+    <div style="font-size:.8rem;color:var(--muted)">確認優化版本後繼續</div>
+    <button class="btn-next" onclick="location.href='07_embodiment_generator.html'">確認，進入步驟 3 →</button>
+  </div>
+</div>
+<div class="screen-label">UI Sketch · 3.2 Claims Analysis View</div>
+</body>
+</html>

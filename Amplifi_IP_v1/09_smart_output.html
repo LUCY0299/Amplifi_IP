@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 步驟5：智慧產出 | Smart Output</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(37,99,235,.08)}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#FFFFFF}
+    .user-mini{display:flex;align-items:center;gap:10px}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 36px;border-bottom:1px solid rgba(212,168,67,.08);background:rgba(8,11,18,.85);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
+    .topbar h1{font-size:1.1rem;font-weight:700}
+    .back-icon{cursor:pointer;color:var(--muted);margin-right:12px;transition:color .2s}
+    .back-icon:hover{color:var(--gold)}
+
+    .step-progress{display:flex;align-items:center;padding:14px 36px;background:var(--surface);border-bottom:1px solid rgba(212,168,67,.07);gap:4px;overflow-x:auto}
+    .step-pip{display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .pip-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+    .pip-num.done{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0A0D14}
+    .pip-num.active{background:var(--surface2);border:2px solid var(--gold);color:var(--gold)}
+    .pip-label{font-size:.75rem;font-weight:600;color:var(--muted)}
+    .pip-label.active-label{color:var(--gold)}
+    .pip-arrow{color:rgba(255,255,255,.1);font-size:.8rem;margin:0 4px}
+
+    .content{padding:28px 36px;flex:1;display:grid;grid-template-columns:1fr 340px;gap:24px}
+
+    .panel{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);padding:24px}
+    .panel h3{font-size:.95rem;font-weight:700;margin-bottom:0}
+
+    /* DOCUMENT TABS */
+    .doc-tabs{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid rgba(212,168,67,.1);margin-bottom:20px}
+    .doc-tab{padding:11px 18px;cursor:pointer;font-size:.83rem;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+    .doc-tab:hover{color:var(--text)}
+    .doc-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+    .document-preview{background:var(--surface2);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:32px;font-size:.87rem;line-height:2;color:var(--text);min-height:500px;overflow-y:auto;max-height:600px}
+    .doc-section{margin-bottom:24px}
+    .doc-section h4{font-size:.85rem;font-weight:700;text-align:center;margin-bottom:12px;background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .doc-section p{color:var(--muted);text-align:justify}
+    .doc-divider{border:none;border-top:1px solid rgba(212,168,67,.1);margin:18px 0}
+
+    /* RIGHT PANEL */
+    .right-panel{display:flex;flex-direction:column;gap:20px}
+
+    /* QA REPORT */
+    .qa-card{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);padding:22px}
+    .qa-card h3{font-size:.92rem;font-weight:700;margin-bottom:16px}
+    .qa-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+    .qa-item:last-child{border-bottom:none}
+    .qa-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+    .qa-pass{background:rgba(80,220,100,.15);color:#6EE89A}
+    .qa-warn{background:rgba(255,180,0,.12);color:#FFB400}
+    .qa-label{font-size:.8rem;color:var(--text);flex:1}
+    .qa-score{font-size:.75rem;font-weight:700;color:var(--gold)}
+
+    .btn-qa{width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,#5B6DF8,#8FA8FF);color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity .2s;margin-top:14px}
+    .btn-qa:hover{opacity:.87}
+
+    /* SUMMARY / COVER IMAGE */
+    .cover-card{background:var(--surface);border:1px solid rgba(212,168,67,.12);border-radius:var(--radius);padding:22px}
+    .cover-card h3{font-size:.92rem;font-weight:700;margin-bottom:14px}
+    .rep-figure-selector{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .fig-opt{width:70px;height:60px;background:var(--surface2);border:2px solid rgba(255,255,255,.06);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:.7rem;color:var(--muted);gap:4px}
+    .fig-opt:hover{border-color:rgba(212,168,67,.4)}
+    .fig-opt.selected{border-color:var(--gold);background:rgba(212,168,67,.08)}
+    .fig-opt span:first-child{font-size:1.1rem}
+
+    /* EXPORT */
+    .export-card{background:var(--surface);border:1px solid rgba(212,168,67,.3);border-radius:var(--radius);padding:22px;background:linear-gradient(135deg,rgba(212,168,67,.06),rgba(212,168,67,.02))}
+    .export-card h3{font-size:.92rem;font-weight:700;margin-bottom:6px}
+    .export-card p{font-size:.78rem;color:var(--muted);margin-bottom:16px}
+    .export-btns{display:flex;gap:10px}
+    .btn-export{flex:1;padding:12px 0;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#0A0D14;font-weight:700;font-size:.88rem;cursor:pointer;transition:transform .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .btn-export:hover{transform:translateY(-1px)}
+    .btn-export-txt{flex:1;padding:12px 0;border:1px solid rgba(212,168,67,.4);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .btn-export-txt:hover{background:rgba(212,168,67,.08)}
+
+    .save-note{text-align:center;font-size:.73rem;color:var(--muted);margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px}
+
+    .action-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;background:var(--surface);border-top:1px solid rgba(212,168,67,.08)}
+    .btn-ghost{padding:11px 24px;border:1px solid rgba(212,168,67,.3);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.9rem;cursor:pointer}
+
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(212,168,67,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+
+    /* Complete badge */
+    .complete-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(80,220,100,.1);border:1px solid rgba(80,220,100,.2);border-radius:99px;padding:5px 14px;font-size:.78rem;color:#6EE89A;font-weight:600}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item active"><span class="icon">⚡</span>當前專案</a>
+  <a class="nav-item" href="10_project_library.html"><span class="icon">📁</span>專案庫</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <div class="user-mini"><div class="avatar">王</div><div class="user-info"><div class="name">王小明</div><div class="email">wang@ipfirm.com</div></div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="back-icon" onclick="location.href='08_abstract_generator.html'">←</span>
+      <h1>步驟 5：智慧產出與審核</h1>
+    </div>
+    <div class="complete-badge">✓ 專案已自動儲存</div>
+  </div>
+  <div class="step-progress">
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">資料導入</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">權利要求解構</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">說明書生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num done">✓</div><div class="pip-label">摘要生成</div></div>
+    <div class="pip-arrow">›</div>
+    <div class="step-pip"><div class="pip-num active">5</div><div class="pip-label active-label">審核與輸出</div></div>
+  </div>
+
+  <div class="content">
+
+    <!-- LEFT: DOCUMENT PREVIEW -->
+    <div>
+      <div class="panel" style="padding-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <h3>📄 完整說明書草稿</h3>
+          <span style="font-size:.75rem;color:var(--muted)">新型專利 #003 · 無線充電裝置</span>
+        </div>
+        <div class="doc-tabs">
+          <div class="doc-tab active">新型摘要</div>
+          <div class="doc-tab">說明書本文</div>
+          <div class="doc-tab">申請專利範圍</div>
+          <div class="doc-tab">圖式說明</div>
+        </div>
+
+        <div class="document-preview">
+          <div class="doc-section">
+            <h4>【新型名稱】</h4>
+            <p style="text-align:center;color:var(--text);font-weight:600">無線充電裝置</p>
+          </div>
+          <hr class="doc-divider"/>
+          <div class="doc-section">
+            <h4>【摘要】</h4>
+            <p>本新型係關於一種無線充電裝置，主要包含一充電線圈模組及一控制模組。該充電線圈模組具有一初級線圈，用以與受電裝置之次級線圈進行電磁感應式無線電力傳輸。該控制模組電性連接至充電線圈模組，並包含一頻率調適電路及一過溫保護電路，前者依據負載狀態動態調整工作頻率，後者於溫度超過預定閾值時自動切斷電源，從而確保充電過程之安全性與效率。此外，本新型另設有一異物偵測模組，可即時偵測充電區域內之非受電物體，並立即停止充電操作，有效防止誤充造成之損害。</p>
+          </div>
+          <hr class="doc-divider"/>
+          <div class="doc-section">
+            <h4>【代表圖】</h4>
+            <p style="text-align:center;color:var(--muted);font-size:.83rem">圖1（已選定為代表圖）</p>
+          </div>
+          <hr class="doc-divider"/>
+          <div class="doc-section">
+            <h4>【指定代表圖之元件符號說明】</h4>
+            <p>100 … 無線充電裝置<br/>110 … 充電線圈模組<br/>120 … 控制模組<br/>130 … 異物偵測模組</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: ACTIONS -->
+    <div class="right-panel">
+
+      <!-- QA REPORT -->
+      <div class="qa-card">
+        <h3>🤖 AI 最終品質審核</h3>
+        <div class="qa-item"><div class="qa-icon qa-pass">✓</div><div class="qa-label">說明書格式規範</div><div class="qa-score">98</div></div>
+        <div class="qa-item"><div class="qa-icon qa-pass">✓</div><div class="qa-label">權利要求書完整性</div><div class="qa-score">95</div></div>
+        <div class="qa-item"><div class="qa-icon qa-pass">✓</div><div class="qa-label">摘要字數符合規定</div><div class="qa-score">100</div></div>
+        <div class="qa-item"><div class="qa-icon qa-warn">!</div><div class="qa-label">圖式符號一致性</div><div class="qa-score" style="color:#FFB400">88</div></div>
+        <div class="qa-item"><div class="qa-icon qa-pass">✓</div><div class="qa-label">技術用語一致性</div><div class="qa-score">93</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05)">
+          <div>
+            <div style="font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">94</div>
+            <div style="font-size:.73rem;color:var(--muted)">總品質分</div>
+          </div>
+          <button style="padding:9px 16px;border:1px solid rgba(212,168,67,.3);border-radius:6px;background:transparent;color:var(--gold);font-size:.78rem;font-weight:600;cursor:pointer">重新審核</button>
+        </div>
+        <button class="btn-qa">⚡ 執行 AI 最終品質審核</button>
+      </div>
+
+      <!-- COVER IMAGE SELECTOR -->
+      <div class="cover-card">
+        <h3>🖼 指定代表圖</h3>
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:12px">選擇一張圖式作為新型摘要的代表圖</p>
+        <div class="rep-figure-selector">
+          <div class="fig-opt selected"><span>🖼</span><span>圖 1</span></div>
+          <div class="fig-opt"><span>🖼</span><span>圖 2</span></div>
+          <div class="fig-opt"><span>🖼</span><span>圖 3</span></div>
+        </div>
+        <p style="font-size:.75rem;color:var(--gold)">✓ 已選定：圖1（立體示意圖）</p>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="export-card">
+        <h3>⬇ 匯出說明書</h3>
+        <p>所有內容已彙整完成，選擇格式下載。</p>
+        <div class="export-btns">
+          <button class="btn-export">📄 導出 .doc</button>
+          <button class="btn-export-txt">📃 導出 .txt</button>
+        </div>
+        <p class="save-note">💾 本專案已自動儲存至專案庫</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn-ghost" onclick="location.href='08_abstract_generator.html'">← 返回步驟 4</button>
+    <div style="font-size:.8rem;color:var(--muted)">
+      🎉 恭喜！說明書草稿已完成
+    </div>
+    <button class="btn-ghost" onclick="location.href='10_project_library.html'">前往專案庫 →</button>
+  </div>
+</div>
+<div class="screen-label">UI Sketch · 3.5 Smart Output Platform</div>
+</body>
+</html>

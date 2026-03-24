@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>智權新霸 — 帳戶與帳務中心 | Account & Billing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#2563EB;--gold-light:#60A5FA;--gold-dark:#1D4ED8;--bg:#F0F6FF;--surface:#FFFFFF;--surface2:#EEF4FF;--text:#1A2540;--muted:#5B6F9A;--radius:14px;--sidebar:240px}
+    body{font-family:'Inter','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid rgba(37,99,235,.1);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:50;box-shadow:2px 0 16px rgba(37,99,235,.06)}
+    .sidebar-logo{padding:0 20px 24px;font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid rgba(37,99,235,.1);margin-bottom:16px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:var(--muted);font-size:.87rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+    .nav-item:hover{color:var(--text);background:rgba(37,99,235,.05)}
+    .nav-item.active{color:var(--gold);background:rgba(37,99,235,.08);border-left-color:var(--gold)}
+    .nav-item .icon{font-size:1rem;width:20px;text-align:center}
+    .sidebar-spacer{flex:1}
+    .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(37,99,235,.08)}
+    .avatar-lg{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:#FFFFFF;flex-shrink:0}
+    .user-mini{display:flex;align-items:center;gap:10px}
+    .user-info .name{font-size:.85rem;font-weight:600}
+    .user-info .email{font-size:.72rem;color:var(--muted)}
+
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column}
+    .topbar{display:flex;align-items:center;padding:18px 36px;border-bottom:1px solid rgba(37,99,235,.08);background:rgba(255,255,255,.95);backdrop-filter:blur(8px);box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .topbar h1{font-size:1.2rem;font-weight:700;color:var(--text)}
+
+    .content{padding:28px 36px;flex:1;display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+
+    /* LEFT NAV */
+    .page-nav{background:var(--surface);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius);padding:12px 0;position:sticky;top:90px;box-shadow:0 2px 12px rgba(37,99,235,.06)}
+    .page-nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;font-size:.87rem;color:var(--muted);border-left:3px solid transparent;transition:all .2s}
+    .page-nav-item:hover{color:var(--text);background:rgba(37,99,235,.04)}
+    .page-nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(37,99,235,.06)}
+
+    /* MAIN CONTENT */
+    .sections{display:flex;flex-direction:column;gap:24px}
+    .panel{background:var(--surface);border:1px solid rgba(37,99,235,.12);border-radius:var(--radius);padding:26px;box-shadow:0 2px 12px rgba(37,99,235,.05)}
+    .panel-header{border-bottom:1px solid rgba(37,99,235,.08);padding-bottom:16px;margin-bottom:20px}
+    .panel-header h2{font-size:1rem;font-weight:700;color:var(--text)}
+    .panel-header p{font-size:.8rem;color:var(--muted);margin-top:4px}
+
+    /* MY PLAN */
+    .plan-banner{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(37,99,235,.03));border:1px solid rgba(37,99,235,.2);border-radius:12px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .plan-info .plan-name{font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .plan-info .plan-tag{font-size:.75rem;color:var(--muted);margin-top:2px}
+    .plan-stats{display:flex;gap:28px}
+    .plan-stat{text-align:center}
+    .plan-stat .val{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .plan-stat .lbl{font-size:.72rem;color:var(--muted);margin-top:2px}
+    .btn-upgrade{padding:10px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:.85rem;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.25)}
+
+    /* TOKEN HISTORY TABLE */
+    table.token-table{width:100%;border-collapse:collapse;font-size:.83rem}
+    table.token-table thead th{text-align:left;padding:10px 12px;color:var(--muted);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid rgba(37,99,235,.08)}
+    table.token-table tbody tr{border-bottom:1px solid rgba(37,99,235,.06)}
+    table.token-table tbody tr:hover{background:rgba(37,99,235,.02)}
+    table.token-table tbody td{padding:12px}
+    .op-type{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:.72rem;font-weight:600}
+    .op-type.gen{background:rgba(37,99,235,.08);color:var(--gold);border:1px solid rgba(37,99,235,.15)}
+    .op-type.analyze{background:rgba(37,99,235,.06);color:var(--gold-dark);border:1px solid rgba(37,99,235,.12)}
+    .op-type.qa{background:rgba(22,163,74,.07);color:#16A34A;border:1px solid rgba(22,163,74,.15)}
+
+    /* PURCHASE PLANS mini */
+    .mini-plans{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+    .mini-plan{background:var(--surface2);border:1px solid rgba(37,99,235,.12);border-radius:12px;padding:18px;text-align:center;position:relative;box-shadow:0 2px 8px rgba(37,99,235,.05)}
+    .mini-plan.best{border-color:var(--gold)}
+    .mini-plan-name{font-size:.85rem;font-weight:700;margin-bottom:4px;color:var(--text)}
+    .mini-plan-price{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:8px 0}
+    .mini-plan-note{font-size:.72rem;color:var(--muted);margin-bottom:14px}
+    .btn-mini-buy{width:100%;padding:9px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:.8rem;cursor:pointer}
+    .btn-mini-contact{width:100%;padding:9px;border:1px solid rgba(37,99,235,.3);border-radius:6px;background:transparent;color:var(--gold);font-weight:600;font-size:.8rem;cursor:pointer}
+    .best-tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px;white-space:nowrap}
+
+    /* BILLING HISTORY */
+    .bill-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(37,99,235,.07)}
+    .bill-row:last-child{border-bottom:none}
+    .bill-left .bill-name{font-size:.88rem;font-weight:600;color:var(--text)}
+    .bill-left .bill-date{font-size:.75rem;color:var(--muted);margin-top:2px}
+    .bill-amount{font-size:.95rem;font-weight:700;color:var(--gold)}
+    .bill-status{font-size:.72rem;color:#16A34A;background:rgba(22,163,74,.08);padding:3px 8px;border-radius:99px;margin-left:12px;border:1px solid rgba(22,163,74,.15)}
+
+    /* PROFILE FORM */
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    .form-group label{display:block;font-size:.77rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+    .form-group input{width:100%;padding:11px 12px;background:var(--surface2);border:1px solid rgba(37,99,235,.1);border-radius:8px;color:var(--text);font-size:.87rem;outline:none;transition:border-color .2s;font-family:inherit}
+    .form-group input:focus{border-color:rgba(37,99,235,.4)}
+    .form-group input.disabled{color:var(--muted);opacity:.6}
+    .btn-save{padding:11px 28px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#FFFFFF;font-weight:700;font-size:.9rem;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.25)}
+    .password-section{margin-top:20px;padding-top:20px;border-top:1px solid rgba(37,99,235,.08)}
+
+    footer{padding:20px 36px;color:var(--muted);font-size:.75rem;border-top:1px solid rgba(37,99,235,.08);background:var(--surface)}
+    .screen-label{position:fixed;bottom:14px;right:18px;font-size:.7rem;color:rgba(37,99,235,.4);pointer-events:none;font-weight:600;letter-spacing:1px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">⚖ 智權新霸</div>
+  <a class="nav-item" href="04_dashboard.html"><span class="icon">🏠</span>主控台</a>
+  <a class="nav-item" href="05_patent_loading.html"><span class="icon">➕</span>建立新專案</a>
+  <a class="nav-item" href="10_project_library.html"><span class="icon">📁</span>專案庫</a>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-footer">
+    <a class="nav-item active" style="padding:0;margin-bottom:16px"><span class="icon">⚙</span>帳戶與帳務</a>
+    <div class="user-mini"><div class="avatar-lg">王</div><div class="user-info"><div class="name">王小明</div><div class="email">wang@ipfirm.com</div></div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar"><h1>⚙ 帳戶與帳務中心</h1></div>
+  <div class="content">
+
+    <!-- PAGE NAV -->
+    <div class="page-nav">
+      <div class="page-nav-item active">📋 我的方案與用量</div>
+      <div class="page-nav-item">🛒 購買方案</div>
+      <div class="page-nav-item">🧾 帳單紀錄</div>
+      <div class="page-nav-item">👤 個人資料</div>
+      <div class="page-nav-item">🔑 修改密碼</div>
+    </div>
+
+    <!-- SECTIONS -->
+    <div class="sections">
+
+      <!-- MY PLAN & USAGE -->
+      <div class="panel" id="plan">
+        <div class="panel-header">
+          <h2>📋 我的方案與用量</h2>
+          <p>目前方案詳細資訊與資源消耗紀錄</p>
+        </div>
+
+        <div class="plan-banner" style="margin-bottom:20px">
+          <div class="plan-info">
+            <div class="plan-name">📦 量販方案</div>
+            <div class="plan-tag">購買日期：2025/01/01 · 到期日：2025/12/31</div>
+          </div>
+          <div class="plan-stats">
+            <div class="plan-stat"><div class="val">18</div><div class="lbl">剩餘篇數</div></div>
+            <div class="plan-stat"><div class="val">2</div><div class="lbl">已使用篇數</div></div>
+            <div class="plan-stat"><div class="val">20</div><div class="lbl">總篇數</div></div>
+          </div>
+          <button class="btn-upgrade">購買更多 →</button>
+        </div>
+
+        <h3 style="font-size:.88rem;font-weight:700;margin-bottom:14px;color:var(--muted)">⚡ Token 消耗歷史紀錄</h3>
+        <table class="token-table">
+          <thead><tr><th>專案名稱</th><th>操作類型</th><th>Token 消耗</th><th>日期</th></tr></thead>
+          <tbody>
+            <tr><td>新型 #003 無線充電裝置</td><td><span class="op-type gen">說明書生成</span></td><td>4,200,000</td><td>2025/03/24</td></tr>
+            <tr><td>新型 #003 無線充電裝置</td><td><span class="op-type analyze">AI 解析</span></td><td>850,000</td><td>2025/03/24</td></tr>
+            <tr><td>新型 #002 智慧感測器外殼</td><td><span class="op-type qa">品質審核</span></td><td>120,000</td><td>2025/03/23</td></tr>
+            <tr><td>新型 #002 智慧感測器外殼</td><td><span class="op-type gen">摘要生成</span></td><td>380,000</td><td>2025/03/23</td></tr>
+            <tr><td>新型 #002 智慧感測器外殼</td><td><span class="op-type gen">說明書生成</span></td><td>5,100,000</td><td>2025/03/22</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- PURCHASE PLAN -->
+      <div class="panel" id="purchase">
+        <div class="panel-header">
+          <h2>🛒 購買方案</h2>
+          <p>選購額外篇數或升級方案</p>
+        </div>
+        <div class="mini-plans">
+          <div class="mini-plan">
+            <div class="mini-plan-name">📄 單篇方案</div>
+            <div class="mini-plan-price">$5,000</div>
+            <div class="mini-plan-note">/ 篇，彈性使用</div>
+            <button class="btn-mini-buy">立即購買</button>
+          </div>
+          <div class="mini-plan best">
+            <div class="best-tag">推薦</div>
+            <div class="mini-plan-name">📦 量販方案</div>
+            <div class="mini-plan-price">$60,000</div>
+            <div class="mini-plan-note">20 篇 · 省 40%</div>
+            <button class="btn-mini-buy">立即購買</button>
+          </div>
+          <div class="mini-plan">
+            <div class="mini-plan-name">🏢 企業方案</div>
+            <div class="mini-plan-price" style="font-size:.95rem">洽談報價</div>
+            <div class="mini-plan-note">客製化大量需求</div>
+            <button class="btn-mini-contact">聯繫業務</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING HISTORY -->
+      <div class="panel" id="billing">
+        <div class="panel-header">
+          <h2>🧾 帳單紀錄</h2>
+          <p>所有歷史購買記錄</p>
+        </div>
+        <div class="bill-row"><div class="bill-left"><div class="bill-name">量販方案 (20篇)</div><div class="bill-date">2025/01/01 · 訂單 #ORD-20250101</div></div><div style="display:flex;align-items:center"><div class="bill-amount">NT$60,000</div><span class="bill-status">已付款</span></div></div>
+        <div class="bill-row"><div class="bill-left"><div class="bill-name">單篇方案 × 1</div><div class="bill-date">2024/11/15 · 訂單 #ORD-20241115</div></div><div style="display:flex;align-items:center"><div class="bill-amount">NT$5,000</div><span class="bill-status">已付款</span></div></div>
+        <div class="bill-row"><div class="bill-left"><div class="bill-name">量販方案 (20篇)</div><div class="bill-date">2024/01/03 · 訂單 #ORD-20240103</div></div><div style="display:flex;align-items:center"><div class="bill-amount">NT$60,000</div><span class="bill-status">已付款</span></div></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="panel" id="profile">
+        <div class="panel-header">
+          <h2>👤 個人資料</h2>
+          <p>修改您的聯絡資訊與帳號設定</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>姓名</label><input type="text" value="王小明"/></div>
+          <div class="form-group"><label>電子郵件（不可修改）</label><input type="email" value="wang@ipfirm.com" class="disabled" readonly/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>公司 / 事務所</label><input type="text" value="台灣智慧財產事務所"/></div>
+          <div class="form-group"><label>聯絡電話</label><input type="tel" value="+886 02-1234-5678"/></div>
+        </div>
+        <button class="btn-save">儲存變更</button>
+
+        <div class="password-section">
+          <h3 style="font-size:.9rem;font-weight:700;margin-bottom:16px">🔑 修改密碼</h3>
+          <div class="form-row">
+            <div class="form-group"><label>目前密碼</label><input type="password" placeholder="••••••••"/></div>
+            <div class="form-group"><label>新密碼</label><input type="password" placeholder="新密碼（至少8位）"/></div>
+          </div>
+          <button class="btn-save" style="background:linear-gradient(135deg,#5B6DF8,#8FA8FF);color:#fff">更新密碼</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <footer>© 2025 智權新霸 Amplifi IP</footer>
+</div>
+<div class="screen-label">UI Sketch · 5. Account & Billing Center</div>
+</body>
+</html>
